@@ -1,0 +1,14 @@
+imprimirUsuarios
+addUsuario 9 Joao
+addUsuario 8 Pedro
+addUsuario 7 Francisco
+addUsuario 6 Maria
+addUsuario 5 Paula
+addUsuario 4 Paulo
+addUsuario 3 Marcelo
+addUsuario 2 Marcela
+addUsuario 1 Marina
+
+imprimirUsuarios
+
+
