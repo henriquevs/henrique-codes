@@ -1,3 +1,8 @@
+/*  UNICAMP - Universidade Estadual de Campinas
+    MC202 - Estruturas de Dados
+    Aluno: Henrique Vicente Souza - RA: 105063 - Turma D
+    Laboratorio 02 - Redes Sociais */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -50,17 +55,16 @@ void adicionaUsuario(int id_lido, char nome_lido[], User **usuario){
       printf("O usuario %s (ID %d) foi adicionado na rede\n", nome_lido, id_lido);
       return;
    }
-
    else{
       p = *usuario; 
-      if((p->id) > id_lido){ /* Insercao no comeco */
+      if((p->id) > id_lido){ /* Insercao de usuario no comeco da lista */
          p = cria_usuario(id_lido, nome_lido, p);
          *usuario = p;
          printf("O usuario %s (ID %d) foi adicionado na rede\n", nome_lido, id_lido);
          return;
       }
       else{
-         while(p!=NULL && (p->id) < id_lido){ /* Insere no meio ou no final */
+         while(p!=NULL && (p->id) < id_lido){ /* Insere usuario no meio ou no final da lista */
             ant = p;
             p = p->user_prox;
          }
@@ -68,7 +72,7 @@ void adicionaUsuario(int id_lido, char nome_lido[], User **usuario){
             ant->user_prox = cria_usuario(id_lido, nome_lido, p);
             printf("O usuario %s (ID %d) foi adicionado na rede\n", nome_lido, id_lido);
          }
-         else if(p->id != id_lido){ /* nao insere dois usuarios diferentes com o mesmo id */
+         else if(p->id != id_lido){ /* Nao insere dois usuarios diferentes com o mesmo id */
             ant->user_prox = cria_usuario(id_lido, nome_lido, p);
             printf("O usuario %s (ID %d) foi adicionado na rede\n", nome_lido, id_lido);
          }
@@ -108,13 +112,11 @@ int adicionaAmigo(User *lista, int id1, int id2){
                   ant->amigo_next = cria_amigo(q, pa);
                   return 1;
                }
-               else if(pa->usr->id != id2){ /* Insere no meio da lista */
+               else if(pa->usr->id != id2){ /* Insere no meio da lista de amigos */
                   ant->amigo_next = cria_amigo(q, pa);
                   return 1;
                }
-               else{
-                  return 0; /* Relacao de amizade ja existe */
-               }
+               else return 0; /* Relacao de amizade ja existe */
             }
             else q = q->user_prox;
          }
@@ -122,9 +124,10 @@ int adicionaAmigo(User *lista, int id1, int id2){
       }
       else p = p->user_prox;
    }
-   return 0;
+   return 0; /* Nao estabeleceu relacao de amizade */
 }
 
+/* Remove o laco de amizade entre dois usuarios */
 int removeAmigo(User *lista, int id1, int id2){
    User *p=lista, *q=lista;
    Amigos *pa=NULL, *ant=NULL;
@@ -150,8 +153,7 @@ int removeAmigo(User *lista, int id1, int id2){
                      pa = pa->amigo_next;
                   }
                }
-               //printf("nao existe amizade entre os usuarios %s e %s\n", p->nome, q->nome);
-               return 0;
+               return 0; /* Nao existe relacao de amizade a ser removida */
             }
             else q = q->user_prox;
          }
@@ -159,9 +161,10 @@ int removeAmigo(User *lista, int id1, int id2){
       }
       else p = p->user_prox;
    }
-   return 0;
+   return 0; /* Nao removeu a relacao de amizade */
 }
 
+/* Remove um usuario da lista */
 User *removerUsuario(User *lista, int id){
    User *p=lista, *ant=NULL;
    Amigos *pa=NULL;
@@ -190,7 +193,7 @@ User *removerUsuario(User *lista, int id){
       lista = lista->user_prox;
       printf("O usuario %s foi excluido da rede\n", p->nome);
       free(p); /* Usuario removido do inicio da lista com sucesso */
-      return lista;
+      return lista; /* Retorna a lista de usuarios atualizada: o usuario com id passado na entrada foi inserido com sucesso */
    }
    
    while(p!=NULL){ /* Remove usuario do meio ou do final da lista */
@@ -209,17 +212,18 @@ User *removerUsuario(User *lista, int id){
          ant->user_prox = p->user_prox;
          printf("O usuario %s foi excluido da rede\n", p->nome);
          free(p); /* Usuario removido do meio ou final da lista com sucesso */
-         return lista;
+         return lista; /* Retorna a lista de usuarios atualizada: o usuario com id passado na entrada foi inserido com sucesso */
       }
       else {
          ant = p;
          p = p->user_prox;
       }
    }
-   return lista;
+   return lista; /* Retorna a lista de usuarios inalterada: o usuario com id passado na entrada nao existe na lista */
 }
 
-void imprimeUsuarios(User *usuario){                              /* 5 Funciona */
+/* Imprime toda lista de usuarios */
+void imprimeUsuarios(User *usuario){
    int flag = 0;
    printf("Usuarios da rede:");
    while(usuario){
@@ -238,7 +242,7 @@ void imprimeUsuarios(User *usuario){                              /* 5 Funciona 
      printf("\n");
 }
 
-/* Imprime toda lista de amigos */                             /* 6 Funciona */
+/* Imprime toda lista de amigos */
 void imprimeAmigos(Amigos *amigos){
    while(amigos){
      if(amigos->amigo_next){ /* Imprime ate o penultimo amigo */
@@ -252,13 +256,13 @@ void imprimeAmigos(Amigos *amigos){
    }
 }
 
-/* Funcao que imprime amigos em comum de dois usuarios */
-void imprimeAmigosEmComum(User *lista, int id1, int id2){                      /* 5 */
+/* Imprime todos os amigos em comum de dois usuarios */
+void imprimeAmigosEmComum(User *lista, int id1, int id2){
    User *user1, *user2;
    Amigos *p, *q;
    int flag1=0;
    
-   /* Encontra ID1 e ID2 */
+   /* Encontra id1 e id2 na lista de usuarios */
    user1 = buscaUsuario(lista, id1);
    user2 = buscaUsuario(lista, id2);
 
@@ -282,13 +286,13 @@ void imprimeAmigosEmComum(User *lista, int id1, int id2){                      /
       else{
          if(p->usr->id < q->usr->id)
             p = p->amigo_next;
-         else
-            q = q->amigo_next;
+         else q = q->amigo_next;
       }
    }
    printf("\n");
 }
 
+/* Converte a opcao da entrada em um inteiro para que seja possivel utilizar "switch" na main, a fim de tornar o codigo mais curto e legível */
 int converte(char string[23]){
    int p;
    if(strcmp(string, "addUsuario") == 0)
@@ -315,23 +319,23 @@ int converte(char string[23]){
    return p;
 }
 
+/* Execucao do programa */
 int main(){
    User *lista=NULL, *aux1=NULL, *aux2=NULL;
    char string[23], nome_lido[TAM];
    int flag, id_lido, id_1, id_2, teste;
    
-   
    while(scanf("%s", string) != EOF){
       flag = converte(string);
       
       switch(flag){
-         case 1: /* Opcao "addUsuario" */    //ok
+         case 1: /* Opcao "addUsuario" */
             scanf(" %d", &id_lido);
             scanf(" %s", nome_lido);
             adicionaUsuario(id_lido, nome_lido, &lista);
             break;
    
-         case 2: /* Opcao "addAmigo" */      //ok
+         case 2: /* Opcao "addAmigo" */
             scanf(" %d %d", &id_1, &id_2);
             teste = adicionaAmigo(lista, id_1, id_2);
             if(teste == 1){
