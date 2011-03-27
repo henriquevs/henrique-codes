@@ -1,0 +1,42 @@
+addUsuario 1 Joao
+addUsuario 2 Pedro
+addUsuario 3 Francisco
+addUsuario 4 Maria
+addUsuario 5 Paula
+addUsuario 6 Paulo
+addUsuario 7 Marcelo
+addUsuario 8 Marcela
+addUsuario 9 Marina
+
+imprimirUsuarios
+
+addAmigo 1 2
+addAmigo 2 1
+addAmigo 1 3
+addAmigo 3 1
+addAmigo 1 4
+addAmigo 1 5
+addAmigo 1 6
+addAmigo 6 2
+addAmigo 6 3
+
+imprimirAmigos 1
+imprimirAmigos 2
+imprimirAmigos 3
+imprimirAmigos 4
+imprimirAmigos 5
+imprimirAmigos 6
+imprimirAmigos 7
+imprimirAmigos 8
+imprimirAmigos 9
+
+imprimirAmigosEmComum 1 2
+imprimirAmigosEmComum 1 3
+imprimirAmigosEmComum 1 4
+imprimirAmigosEmComum 1 5
+imprimirAmigosEmComum 1 6
+imprimirAmigosEmComum 1 7
+imprimirAmigosEmComum 1 8
+imprimirAmigosEmComum 1 9
+
+

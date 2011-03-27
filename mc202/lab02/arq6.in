@@ -1,0 +1,41 @@
+#Entrada 1
+addUsuario 6 Joao #primeiro usuário da rede
+addUsuario 4 Pedro
+addUsuario 3 Paulo
+addUsuario 7 Maria
+addUsuario 30 Francisco
+
+addAmigo 6 4
+addAmigo 6 4 #não cria uma nova amizade porque eles já são amigos
+addAmigo 6 3
+addAmigo 7 6
+addAmigo 3 4
+addAmigo 8 9 #não cria a amizade porque os usuários não existem
+
+imprimirUsuarios
+imprimirAmigos 3
+imprimirAmigos 4
+imprimirAmigos 6
+imprimirAmigos 7
+
+removerUsuario 7
+
+imprimirUsuarios
+imprimirAmigos 3
+imprimirAmigos 4
+imprimirAmigos 6
+imprimirAmigos 30
+imprimirAmigos 7 #o usuário não existe mais, não imprime nada
+
+imprimirAmigosEmComum 6 3
+removerAmigo 4 3
+imprimirAmigosEmComum 6 3 #os usuários existem, mas eles não tem nenhum amigo em comum
+imprimirAmigosEmComum 8 9 #os usuarios não existem, não imprime nada
+
+removerUsuario 7 #o usuário não existe mais, não exlui nenhum usuário
+removerAmigo 4 3 #a amizade não existe mais, não tem amizade para remover
+removerAmigo 9 8 #usuários não existem, não tem amizade para remover
+
+#imprimirUsuarios
+
+
