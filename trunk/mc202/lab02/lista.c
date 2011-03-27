@@ -410,8 +410,10 @@ int main(){
                   imprimeAmigos(aux1->lista_de_amigos);
                   break;
                }
-               else
+               else{
                   printf("Amigos de %s:\n", aux1->nome);
+                  break;
+               }
             }
       
          case 7: /* Opcao "imprimirAmigosEmComum" */
