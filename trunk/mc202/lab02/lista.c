@@ -130,35 +130,19 @@ int removeAmigo(User *lista, int id1, int id2){
    Amigos *pa=NULL, *ant=NULL;
    
    while(p!=NULL){ /* busca pelo id 1 */
-      if(p->id == id1){
-         printf("usuario %d encontrado\n", id1);
+      if(p->id == id1){ /* Usuario detentor do id1 encontrado */ 
          while(q!=NULL){ /* id1 encontrado; busca pelo id2 */
-            if(q->id == id2){
-               printf("usuario %d encontrado\n", id2);
-               
-               
-               
-               
-               
+            if(q->id == id2){ /* Usuario detentor do id2 encontrado */
                pa = p->lista_de_amigos;
-               printf("teste\n");
-               
-               
-               if(pa!=NULL && pa->usr->id == id2){
+               if(pa!=NULL && pa->usr->id == id2){ /* Testa */
                   p->lista_de_amigos = pa->amigo_next;
-                  free(pa);
-                  printf("amigo removido do inicio\n");
+                  free(pa); /* Amigo id2 removido do inicio da lista de amigos do id1 */
                   return 1;
                }
-               
-               
                while(pa!=NULL){
-                  if(pa->usr->id == id2){ /* a amizade existe */
-                     
+                  if(pa->usr->id == id2){ /* a amizade existe */    
                      ant->amigo_next = pa->amigo_next;
-                     free(pa);
-                     printf("amizade removida no meio ou no final\n");
-                     
+                     free(pa); /* Amigo id2 removido do meio ou do final da lista de amigos do id1 */
                      return 1;
                   }
                   else{
@@ -166,16 +150,12 @@ int removeAmigo(User *lista, int id1, int id2){
                      pa = pa->amigo_next;
                   }
                }
-               printf("nao existe amizade entre os usuarios %s e %s\n", p->nome, q->nome);
-               return 1;
-               
-               
-               
-               
+               //printf("nao existe amizade entre os usuarios %s e %s\n", p->nome, q->nome);
+               return 0;
             }
             else q = q->user_prox;
          }
-         break; /* id 2 nao existe na lista; id1 ja encontrado aborta busca no restante da lista */
+         break; /* id 2 nao existe na lista; id1 ja encontrado; aborta busca no restante da lista */
       }
       else p = p->user_prox;
    }
@@ -187,20 +167,16 @@ User *removerUsuario(User *lista, int id){
    Amigos *pa=NULL;
    int aux, id_aux;
    
-   if(p==NULL){
-      printf("a lista de usuarios esta vazia\n");
-      return NULL;     
-   }
+   if(p==NULL) return NULL; /* A lista de usuarios esta vazia */
    
-   if(p->id == id){ /* Caso de remocao no inicio */
+   if(p->id == id){ /* Remove usuario do inicio lista */
       pa = p->lista_de_amigos;
       while(pa != NULL){ /* Percorre lista de amigos */
          id_aux = pa->usr->id;
          aux = removeAmigo(lista, id, id_aux); /* Remove o primeiro amigo da lista do usuario com o id passado na entrada */
          if(aux == 1){
             aux = removeAmigo(lista, id_aux, id); /* Remove o usuario da lista da lista de amigos do amigo */
-            if(aux == 1) printf("vinculo de amizade removido com sucesso \n");
-            else{
+            if(aux != 1){
                printf("erro ao remover vinculo de amizade\n");
                exit(1);
             }   
@@ -211,37 +187,28 @@ User *removerUsuario(User *lista, int id){
          }
          pa = pa->amigo_next;
       }
-      printf("todos os vinculos de amizade removido com sucesso \n");
       lista = lista->user_prox;
-      free(p);
-      printf("usuario removido do inicio da lista com sucesso \n");
+      printf("O usuario %s foi excluido da rede\n", p->nome);
+      free(p); /* Usuario removido do inicio da lista com sucesso */
       return lista;
    }
-   while(p!=NULL){ /* Remove usuario no meio ou no final */
+   
+   while(p!=NULL){ /* Remove usuario do meio ou do final da lista */
       if(p->id == id){
          pa = p->lista_de_amigos;
          while(pa != NULL){ /* Percorre lista de amigos */
             id_aux = pa->usr->id;
             aux = removeAmigo(lista, id, id_aux); /* Remove o primeiro amigo da lista do usuario com o id passado na entrada */
-            if(aux == 1){
-               aux = removeAmigo(lista, id_aux, id); /* Remove o usuario da lista da lista de amigos do amigo */
-               if(aux == 1) printf("vinculo de amizade removido com sucesso \n");
-               else{
-                  printf("erro ao remover vinculo de amizade\n");
-                  exit(1);
-               }   
-            }
+            if(aux == 1) aux = removeAmigo(lista, id_aux, id); /* Remove o usuario da lista da lista de amigos do amigo */   
             else{
                printf("erro ao remover vinculo de amizade\n");
                exit(1);
             }
             pa = pa->amigo_next;
          }
-         printf("todos os vinculos de amizade removido com sucesso \n");
-
          ant->user_prox = p->user_prox;
-         free(p);
-         printf("usuario removido do meio ou final da lista com sucesso \n");
+         printf("O usuario %s foi excluido da rede\n", p->nome);
+         free(p); /* Usuario removido do meio ou final da lista com sucesso */
          return lista;
       }
       else {
@@ -249,7 +216,6 @@ User *removerUsuario(User *lista, int id){
          p = p->user_prox;
       }
    }
-   printf("usuario nao encontrado na lista\n");
    return lista;
 }
 
@@ -369,7 +335,7 @@ int main(){
             scanf(" %d %d", &id_1, &id_2);
             teste = adicionaAmigo(lista, id_1, id_2);
             if(teste == 1){
-            teste = adicionaAmigo(lista, id_2, id_1);
+               teste = adicionaAmigo(lista, id_2, id_1);
                if(teste == 1){
                   aux1 = buscaUsuario(lista, id_1);
                   aux2 = buscaUsuario(lista, id_2);
@@ -384,8 +350,13 @@ int main(){
             scanf(" %d %d", &id_1, &id_2);
             teste = removeAmigo(lista, id_1, id_2);
             if(teste == 1){
-            teste = removeAmigo(lista, id_2, id_1);
-            break;
+               teste = removeAmigo(lista, id_2, id_1);
+               if(teste == 1){
+                  aux1 = buscaUsuario(lista, id_1);
+                  aux2 = buscaUsuario(lista, id_2);
+                  printf("Os usuarios %s e %s nao sao mais amigos\n", aux1->nome, aux2->nome);             
+               }
+               break;
             }
             else
                break;
