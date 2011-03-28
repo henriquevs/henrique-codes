@@ -23,6 +23,22 @@ typedef struct amigos{
    struct amigos *amigo_next;
 } Amigos;
 
+/* Funcao que verifica se houve memoria suficiente na alocacao dinamica de um usuario */
+void memoria_insuficiente(User *p){
+   if(p == NULL){
+      printf("Memoria insuficiente\n");
+      exit(1);
+   }
+}
+
+/* Funcao que verifica se houve memoria suficiente na alocacao dinamica de amigos a um usuario */
+void memoria_insuficiente_adicao_amigos(Amigos *r){
+   if(r == NULL){
+      printf("Memoria insuficiente\n");
+      exit(1);
+   }
+}
+
 /* Busca um usuario na lista */
 User *buscaUsuario(User *lista, int id){
    User *p = lista;
@@ -39,6 +55,8 @@ User *cria_usuario(int id, char *name, User* proximo){
    User *p; /* "p" eh um ponteiro para o novo no */
    p = (User*)malloc(sizeof(User));
   
+   memoria_insuficiente(p); /* Verificacao */
+   
    strcpy(p->nome, name);
    p->id = id;
    p->lista_de_amigos = NULL; /* Quando um usuario eh inserido ele nao tem amigos */
@@ -84,6 +102,8 @@ void adicionaUsuario(int id_lido, char nome_lido[], User **usuario){
 Amigos *cria_amigo(User *usuario, Amigos *proximo){
    Amigos* r; /* "p" eh um ponteiro para o novo no */
    r = (Amigos*)malloc(sizeof(Amigos));
+   
+   memoria_insuficiente_adicao_amigos(r); /* Verificacao */
    
    r->usr = usuario;
    r->amigo_next = proximo;
