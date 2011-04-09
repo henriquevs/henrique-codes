@@ -4,181 +4,201 @@
 # include <stdlib.h>
 # include <string.h>
 
-typedef struct celula{
+typedef struct cliente{
    char nome[16]; /* Nome com no maximo 15 caracteres */
-   int servico;
-   struct celula *prox;
-} Celula;
+   struct cliente *prox;
+} Cliente;
 
-typedef struct fila{
-   struct celula *inicio;
-   struct celula *fim;
-} Fila;
+typedef struct caixa{
+   int numero_do_caixa; /* O numero do caixa representa o servico, i.e., cada caixa faz um servico diferente */
+   struct cliente *inicio_especial;
+   struct cliente *fim_especial;
+   struct cliente *inicio_normal;
+   struct cliente *fim_normal;
+   struct caixa *next;
+} Caixa;
 
-/* Para usar a impressao devo colocar:
-   fila = imprime(fila);
-*/
-
-/* Lembrar de apagar todos os elementos da fila e por ultimo apagar a fila */
-
-/* Para 5 caixas sera uma matriz de cinco linhas por duas colunas, as linhas representam os caixas e as colunas representam os tipos de servico: normal ou especial 
-ou posso fazer dois vetores, um para clientes normais e outro para os especiais
-*/
-
-int main(){
-   int n_caixas, n_filas, parametro;
-   Fila * vecFilas;
-   Celula * aux;
-   
-   //scanf("%d", &n_caixas);
-   n_caixas = 2;
-   n_filas = n_caixas * 2;
-   // Aloca filas
-   vecFilas = (Fila*)malloc(sizeof(Fila)*n_filas);
-   // Cria Nó
-   aux = (Celula*)malloc(sizeof(Celula));
-   strcpy(aux->nome,"joao");
-   aux->servico = 1;
-   aux->prox = NULL;
-   // Acerta ponteiros para o nó
-   vecFilas[0].inicio = aux;
-   vecFilas[0].fim = aux;
-   // Cria Nó
-   aux = (Celula*)malloc(sizeof(Celula));
-   strcpy(aux->nome,"maria");
-   aux->servico = 2;
-   aux->prox = NULL;
-   // Acerta ponteiros para o nó
-   vecFilas[0].fim->prox = aux;
-   vecFilas[0].fim = aux;
-   
-   aux = vecFilas[0].inicio;
-   while (aux!=NULL) {
-      printf("%s %d\n", aux->nome, aux->servico);
-      aux = aux->prox;
-   }
-   
-   return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Testa se a memoria foi alocada corretamente */
-void teste_memoria(Fila *p){
+/* Testa a alocacao de memoria para o caixa */
+void teste_memoria_caixa(Caixa *p){
    if(p == NULL){
       printf("Memoria insuficiente\n");
       exit(1);
    }
 }
 
-/* Recebe um ponteiro do final e retorna um novo ponteiro para o final da fila */   
-Fila *insere(Fila *fila, char nome[]){ /* Na fila, sempre inserimos no final */
-   Celula *cel=NULL;
-   
-   cel=(Celula*)malloc(sizeof(Celula));
-   /* Lembrar de verificar se a memória foi alocada corretamente */
-
-   cel->prox = NULL;
-   
-   /* Insercao quando a fila esta vazia */
-   if(fila->inicio == NULL && fila->fim == NULL){
-      fila->inicio = cel;
-      fila->fim = cel;
+/* Testa a alocacao de memoria para o cliente */
+void teste_memoria_cliente(Cliente *q){
+   if(q == NULL){
+      printf("Memoria insuficiente\n");
+      exit(1);
    }
-   else{
-      fila->fim->prox = cel;
-      fila->fim = cel; /* Atualiza o final da fila */
-   }
-   return fila; /* Retorna a fila atualizada */
 }
 
-/* Pega o elemento e este sai da fila, porem nao ha liberacao de memoria e retorna esse elemento */
-Celula *get(Fila **fila){
-   Celula *aux=NULL;
-   
-   if((*fila)->inicio == NULL || (*fila)->fim == NULL) /* Fila sem nenhum elemento */
-      return NULL;
-   else if((*fila)->inicio == (*fila)->fim){ /* Fila com somente um elemento */
-      aux = (*fila)->inicio;
-      (*fila)->inicio = NULL;
-      (*fila)->fim = NULL;
+/* Cria os caixas "no formato de uma lista ligada */
+Caixa *cria_caixas(int n){
+   Caixa *inicio=NULL, *aux=NULL, *p;
+   int i;
+
+   for(i=0; i<n; i++){
+      if(i == 0){
+         p=(Caixa*)malloc(sizeof(Caixa));
+         teste_memoria_caixa(p); /* Verifica */
+         p->numero_do_caixa=i+1; /* Este numero representa o servico do caixa */
+         p->inicio_especial=NULL;
+         p->fim_especial=NULL;
+         p->inicio_normal=NULL;
+         p->fim_normal=NULL;
+         p->next=NULL;
+         inicio=p; /* Ponteiro do inicio da sequencia de caixas */
+         aux=inicio; /* Faz a ligacao do primeiro elemento da "lista" de caixas com um possível segundo elemento */
+         p=p->next;
+      }
+      else{ /* Vai preenchendo a sequencia de caixas na forma de lista ligada; notar que a referencia ao inicio desta lista nao se perde */
+         p=(Caixa*)malloc(sizeof(Caixa));
+         teste_memoria_caixa(p); /* Verifica */
+         p->numero_do_caixa=i+1; /* Este numero representa o servico do caixa */
+         p->inicio_especial=NULL;
+         p->fim_especial=NULL;
+         p->inicio_normal=NULL;
+         p->fim_normal=NULL;
+         p->next=NULL;
+         aux->next=p;
+         aux=p;
+         p=p->next;
+      }
    }
-   else{ /* Fila com mais de um elemento */
-      aux = (*fila)->inicio;
-      (*fila)->inicio = aux->prox;
-   }
+   return inicio;
+}
+
+/* Cria o no para inserir o cliente na sua respectiva fila */
+Cliente *cria_cliente(char nome[], int servico){
+   Cliente *aux=NULL;
+   aux=(Cliente*)malloc(sizeof(Cliente));
+   teste_memoria_cliente(aux); /* Verifica */
+   strcpy(aux->nome,nome);
+   aux->prox=NULL;
    return aux;
 }
 
-/* Remove do inicio */   
-Fila *remover(Fila *fila){ /* Na estrutura Fila sempre removemos do inicio */
-   Celula *aux=NULL;
-   
-   aux=(Celula*)malloc(sizeof(Celula));
-   /* Lembrar de testar se a memoria foi alocada corretamente */
-   
-   /* Fila vazia */
-   if(fila->inicio==NULL || fila->fim==NULL)
-      return NULL;
-   /* Caso em que a fila tem elementos */
-   if(fila->inicio == fila->fim){ /* Fila com somente um elemento */
-      free(fila->inicio); /* Podia ser free(fila->fim) */
-      fila->inicio = NULL;
-      fila->fim = NULL;
+/* Busca o caixa em que o cliente deve ser inserido */
+Caixa *busca_caixa(int n, Caixa *inicio){
+   Caixa *aux=inicio;
+   while(aux != NULL){
+      if(aux->numero_do_caixa == n) return aux;
+      else aux=aux->next;
    }
-   /* Fila com mais de um elemento */
-   else{
-      aux = fila->inicio;
-      fila->inicio = aux->prox;
-      free(aux);
-   }
-   return fila; 
+   return NULL;
 }
 
-/* Imprime todos os elementos */
-Fila *imprime(Fila *fila){
-   Celula *aux_cel;
-   Fila *aux_fila;
+Caixa *insere(char nome[], int servico, int prioridade, Caixa *inicio){
+   Cliente *q=NULL;
+   Caixa *procura=NULL;
    
-   aux_fila = (Fila*)malloc(sizeof(Fila)); /* Crio uma fila nova idêntica à primeira, à medida que imprimo cada elemento da mesma */
-   /* Lembrar de testar se a memoria foi alocada corretamente */
+   q=cria_cliente(nome, servico);
+   procura=busca_caixa(servico, inicio);
+   if(procura != NULL){ /* Encontrou o caixa correto em que o cliente deve ser inserido */
+      
+
+      
+      if(prioridade == 1){ /* Cliente especial */
+         
+         if(procura->inicio_especial==NULL || procura->fim_especial==NULL){ /* Fila de clientes especiais vazia */
+            procura->inicio_especial=q;
+            procura->fim_especial=q;
+            return procura;
+         }
+         else{
+            procura->fim_especial->prox=q;
+            procura->fim_especial=q; /* Atualia o final da fila */
+            return procura;
+         }
+      
+
+      }
+      else if(prioridade == 0){ /* Cliente normal */
+      
+         if(procura->inicio_normal==NULL || procura->fim_normal==NULL){ /* Fila de clientes normais vazia */
+            procura->inicio_normal=q;
+            procura->fim_normal=q;
+            return procura;
+         }
+         else{
+            procura->fim_normal->prox=q;
+            procura->fim_normal=q; /* Atualia o final da fila */
+            return procura;
+         }
+      
+
+      }
    
-   while((aux_cel = get(&fila)) != NULL){
-      /* Dar um printf no aux de acordo com o enunciado */
-      aux_fila = insere(aux_fila, aux_cel->nome);
-      free(aux_cel);
+   
+   
    }
-   free(fila); /* Removo a fila antiga */
-   return aux_fila; /* Retorno a nova fila */
+   printf("Erro ao inserir cliente\n");
+   return NULL;
+
 }
 
-/* Cria os caixas para o atendimento */
-Fila *cria_caixas(int n_caixas){
-   Fila **mat;
-   int i;
+
+
+
+
+
+
+
+
+int main(){
+   int n_caixas, opcao, prioridade, servico; /* "servico" se refere ao numero do caixa */
+   Caixa *balcoes, *aux=NULL;
+   char nome_lido[16];
    
-   mat=(Fila**)malloc(sizeof(Fila));
-   teste_memoria(*mat); /* Verificacao */
-   for(i=0; i<n; i++){
-      mat[i]=(Fila*)malloc(sizeof(Fila));
-      teste_memoria(mat[i]); /* Verificacao */
-   }
+   scanf("%d", &n_caixas); /* Capta o numero de caixas do banco */
+   
+   balcoes=cria_caixas(n_caixas); /* "balcoes" aponta para o inicio da fila dos caixas */
+   
+   printf("'testando' - numero do servico do primeiro caixa: %d\n", balcoes->numero_do_caixa); // Está funcionando
+   balcoes=balcoes->next;
+   printf("'testando' - numero do servico do segundo caixa: %d\n", balcoes->numero_do_caixa); // Está funcionando
+   
+   do{
+      scanf("%d", &opcao);
+      
+      switch(opcao){
+         
+         case 1: /* novo cliente entra no banco */
+            scanf(" %s %d %d", nome_lido, &prioridade, &servico);
+            aux=insere(nome_lido, servico, prioridade, balcoes);
+            
+            if(aux != NULL){
+               if(prioridade == 1)
+                  printf("O(A) cliente %s entrou na fila %d como cliente especial\n", nome_lido, servico);
+               else if(prioridade == 0)
+                  printf("O(A) cliente %s entrou na fila %d como cliente normal\n", nome_lido, servico);
+            }
+            
+            break;
+            
+         case 2: /* imprime a fila de clientes em cada caixa */
+            
+            
+            break;
+            
+         case 3: /* imprime o próximo cliente a ser atendido em cada caixa */
+            
+            
+            break;
+            
+         case 4: /* novo atendimento (próximo cliente) */
+            
+            
+            break;
+            
+         
+      }
+   } while(opcao != 5);
+   
+   // case 5: /* encerra expediente */
+            
+            
+      
 }
