@@ -163,9 +163,9 @@ void imprime(Caixa *inicio){
             printf("->");
             while(q!=NULL){
                if(r->prox!=NULL && q->prox!=NULL){ /* Imprime ate o penultimo cliente normal */
-               printf("%s->", q->nome);
-               r=q;
-               q=q->prox;
+                  printf("%s->", q->nome);
+                  r=q;
+                  q=q->prox;
                }
                else{
                   printf("%s", q->nome); /* Imprime o ultimo cliente normal */
@@ -181,9 +181,9 @@ void imprime(Caixa *inicio){
                printf("Servico %d:\n", p->numero_do_caixa);
                while(q!=NULL){
                   if(r->prox!=NULL && q->prox!=NULL){ /* Imprime ate o penultimo cliente normal */
-                  printf("%s->", q->nome);
-                  r=q;
-                  q=q->prox;
+                     printf("%s->", q->nome);
+                     r=q;
+                     q=q->prox;
                   }
                   else{
                      printf("%s", q->nome); /* Imprime o ultimo cliente normal */
@@ -240,7 +240,7 @@ Cliente *remover(Caixa *balcao){ /* A liberacao da memoria ocorre na funcao "mai
 /* Desaloca toda a memoria "preenchida pelos clientes" */
 void desalocar_clientes(Cliente *q){
    Cliente *aux=NULL;
-   if(q!=NULL){
+   while(q!=NULL){
       aux=q;
       q=q->prox;
       free(aux);
