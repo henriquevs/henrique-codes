@@ -135,32 +135,50 @@ void imprime(Caixa *inicio){
    Cliente *q=NULL, *r=NULL;
    int flag1=0, flag2=0;
       
-      /* Verifica se a fila de clientes especiais nao esta vazia */
-      if(p->inicio_especial!=NULL && p->fim_especial!=NULL){ /* Se entrarmos neste "if" entao a lista de clientes especiais nao eh vazia */
-         q=p->inicio_especial;
+   /* Verifica se a fila de clientes especiais nao esta vazia */
+   if(p->inicio_especial!=NULL && p->fim_especial!=NULL){ /* Se entrarmos neste "if" entao a lista de clientes especiais nao eh vazia */
+      q=p->inicio_especial;
+      r=q;
+      printf("Servico %d:\n", p->numero_do_caixa);
+      while(q!=NULL){ /* Anda ate o ultimo cliente especial */
+         if(r->prox!=NULL && q->prox!=NULL){ /* Imprime ate o penultimo cliente especial */
+            printf("%s->", q->nome);
+            r=q;
+            q=q->prox;
+         }
+         else{
+            printf("%s", q->nome); /* Imprime o ultimo cliente especial */
+            q=q->prox;
+         }               
+      }
+      flag1=1; /* Indica que imprimimos todos os clientes especiais */
+   }
+
+   /* Verifica se a fila de clientes normais nao esta vazia */
+   if(p->inicio_normal!=NULL && p->fim_normal!=NULL){ /* Se entrarmos neste "if" eh porque a lista de clientes normais nao eh vazia */
+      /* Verifica se houve impressao de clientes especiais */
+      if(flag1 == 1){ /* Se entrarmos neste "if" entao houve impressao de clientes especiais */
+         q=p->inicio_normal;
          r=q;
-         printf("Servico %d:\n", p->numero_do_caixa);
-         while(q!=NULL){ /* Anda ate o ultimo cliente especial */
-            if(r->prox!=NULL && q->prox!=NULL){ /* Imprime ate o penultimo cliente especial */
+         printf("->");
+         while(q!=NULL){
+            if(r->prox!=NULL && q->prox!=NULL){ /* Imprime ate o penultimo cliente normal */
                printf("%s->", q->nome);
                r=q;
                q=q->prox;
             }
             else{
-               printf("%s", q->nome); /* Imprime o ultimo cliente especial */
+               printf("%s", q->nome); /* Imprime o ultimo cliente normal */
                q=q->prox;
-            }               
+            }
          }
-         flag1=1; /* Indica que imprimimos todos os clientes especiais */
-      }
-
-      /* Verifica se a fila de clientes normais nao esta vazia */
-      if(p->inicio_normal!=NULL && p->fim_normal!=NULL){ /* Se entrarmos neste "if" eh porque a lista de clientes normais nao eh vazia */
-         /* Verifica se houve impressao de clientes especiais */
-         if(flag1 == 1){ /* Se entrarmos neste "if" entao houve impressao de clientes especiais */
+         flag2=1; /* Indica que imprimimos todos os clientes normais */
+      } 
+      else{
+         if(flag1 == 0){ /* Se entrarmos neste "if" entao NAO houve impressao de clientes especiais */
             q=p->inicio_normal;
             r=q;
-            printf("->");
+            printf("Servico %d:\n", p->numero_do_caixa);
             while(q!=NULL){
                if(r->prox!=NULL && q->prox!=NULL){ /* Imprime ate o penultimo cliente normal */
                   printf("%s->", q->nome);
@@ -173,29 +191,11 @@ void imprime(Caixa *inicio){
                }
             }
             flag2=1; /* Indica que imprimimos todos os clientes normais */
-         } 
-         else{
-            if(flag1 == 0){ /* Se entrarmos neste "if" entao NAO houve impressao de clientes especiais */
-               q=p->inicio_normal;
-               r=q;
-               printf("Servico %d:\n", p->numero_do_caixa);
-               while(q!=NULL){
-                  if(r->prox!=NULL && q->prox!=NULL){ /* Imprime ate o penultimo cliente normal */
-                     printf("%s->", q->nome);
-                     r=q;
-                     q=q->prox;
-                  }
-                  else{
-                     printf("%s", q->nome); /* Imprime o ultimo cliente normal */
-                     q=q->prox;
-                  }
-               }
-               flag2=1; /* Indica que imprimimos todos os clientes normais */
-            }
          }
       }
-      /* Se houve impressao de clientes, finalizamos a impressao com a quebra de linha */
-      if(flag1==1 || flag2==1) printf("\n");
+   }
+   /* Se houve impressao de clientes, finalizamos a impressao com a quebra de linha */
+   if(flag1==1 || flag2==1) printf("\n");
 }
 
 /* Impressao dos proximos a serem atendidos */
@@ -284,7 +284,7 @@ int main(){
                else if(prioridade == 0)
                   printf("O(A) cliente %s entrou na fila %d como cliente normal.\n", nome_lido, servico);
             }
-            break;
+         break;
             
          case 2: /* Imprime a fila de clientes em cada caixa */
             aux=balcoes;
@@ -293,8 +293,8 @@ int main(){
                imprime(aux);
                aux=aux->next;
             }
-            break;
-            
+         break;
+
          case 3: /* Imprime o próximo cliente a ser atendido em cada caixa */
             aux=balcoes;
             printf("Proximos clientes a serem atendidos:\n");
@@ -302,7 +302,7 @@ int main(){
                imprime_proximos(aux);
                aux=aux->next;
             }
-            break;
+         break;
             
          case 4: /* Novo atendimento em todas as filas nao vazias (próximo cliente) */
             aux=balcoes;
@@ -312,10 +312,12 @@ int main(){
                   printf("Um(a) cliente foi atendido(a) na fila %d.\n", aux->numero_do_caixa);
                   free(tmp); /* Libera memoria "alocada pelo cliente" */
                }
+               else
+                  printf("A fila %d esta vazia.\n", aux->numero_do_caixa);
                aux=aux->next;
             }
-            break;
-            
+         break;
+
       }
    } while(opcao != 5); /* Encerra o expediente */
    printf("Encerrando expediente... Clientes nao atendidos:\n");
