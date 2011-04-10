@@ -1,0 +1,22 @@
+Passos:
+1. Coloque os arquivos em anexo na mesma pasta que seu código
+2. No seu código, coloque no topo >>  #include "balloc.h"  <<
+3. Coloque os comandos malloc e free de seu código em letras maiúsculas (mude para MALLOC e FREE)
+4. Insira os códigos abaixo no início e no fim do seu código:
+
+Início (uma função auxiliar fora do main):
+
+/* Funcao auxiliar que imprime dados sobre bloco de memoria nao liberado */
+void bprint(char *who, int where, void *ptr) {
+    printf("Arquivo: %s, linha: %d\n",who,where);
+}
+
+Fim (no fim do main):
+
+/* Verifica se foram liberados todos os blocos alocados */
+bapply(bprint);
+
+Se houver, após a sua liberação de memória, algum bloco que não foi liberado, serão impressas linhas (uma para cada bloco não liberado).
+Essas linhas dizem em qual arquivo e linha desse arquivo que a alocação ocorreu.
+Exemplo: Arquivo: grafo.c, linha: 47
+Isso quer dizer que a alocação realizada no arquivo grafo.c, linha 47, não foi liberada.
