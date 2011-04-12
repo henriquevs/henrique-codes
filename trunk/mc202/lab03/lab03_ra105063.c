@@ -216,7 +216,7 @@ void imprime_proximos(Caixa *balcao){
 Cliente *remover(Caixa *balcao){ /* A liberacao da memoria ocorre na funcao "main" */
    Cliente *aux=NULL;
    
-   if(balcao->inicio_especial != NULL){ /* Verifica que a fila de clientes especiais nao esta vazia */
+   if(balcao->inicio_especial != NULL){ /* Verifica se a fila de clientes especiais nao esta vazia */
       aux=balcao->inicio_especial;
       if(balcao->inicio_especial == balcao->fim_especial){ /* Remocao quando so existe um cliente na fila */
          balcao->inicio_especial = NULL; /* Atualiza  o inicio da fila de clientes */
@@ -269,7 +269,7 @@ int main(){
    
    scanf("%d", &n_caixas); /* Capta o numero de caixas do banco */
    
-   balcoes=cria_caixas(n_caixas); /* "balcoes" aponta para o inicio da "lista ligada de caixas */
+   balcoes=cria_caixas(n_caixas); /* "balcoes" aponta para o inicio da "lista ligada de caixas" */
    
    do{
       scanf("%d", &opcao);
