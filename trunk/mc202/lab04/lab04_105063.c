@@ -1,16 +1,19 @@
-/* lab04 - Campo minado */
+/*  UNICAMP - Universidade Estadual de Campinas
+    MC202 - Estruturas de Dados
+    Aluno: Henrique Vicente Souza - RA: 105063 - Turma D
+    Laboratorio 04 - Campo Minado */
 
 #include <stdio.h>
 #include <stdlib.h>
 
 /* Estrutura do elemento da matriz */
 typedef struct elemento{
-   int visivel; /* Booleano que indica se o elemento esta ou nao visivel */
+   int visivel; /* Booleano que indica se o elemento esta(1) ou nao(0) visivel */
    char simbolo;
    int n_bombas; /* Numero de bombas ao redor do elemento */
 } Elemento;
 
-/* Teste de memória 1 */
+/* Teste de memória para a alocacao das linhas */
 void teste_memoria1(Elemento **matriz){
    if(matriz==NULL){
       printf("Memoria insuficiente\n");
@@ -18,7 +21,7 @@ void teste_memoria1(Elemento **matriz){
    }
 }
 
-/* Teste de memória 2 */
+/* Teste de memória para a alocacao das colunas */
 void teste_memoria2(Elemento *matriz){
    if(matriz==NULL){
       printf("Memoria insuficiente\n");
@@ -33,7 +36,6 @@ Elemento **aloca_matriz(int n_linhas, int n_colunas){
    
    aux=(Elemento**)malloc(n_linhas*sizeof(Elemento*));
    teste_memoria1(aux);
-   // Testar se a memória foi alocada corretamente
    while(i<n_linhas){
       aux[i]=(Elemento*)malloc(n_colunas*sizeof(Elemento));
       teste_memoria2(aux[i]);
@@ -77,7 +79,7 @@ void contar_bombas_vizinhas(Elemento **matriz, int n_linhas, int n_colunas){
 }
 
 /* Capta os elementos da matriz passados na entrada */
-void capta(Elemento **matriz, int n_linhas, int n_colunas){
+void capta(Elemento **matriz, int n_linhas, int n_colunas, int *minas){
    int i, j;
    char simbolo;
    
@@ -85,6 +87,7 @@ void capta(Elemento **matriz, int n_linhas, int n_colunas){
       for(j=0; j<n_colunas; j++){
          do simbolo=getchar(); /* Verifica caracter valido */
          while(simbolo!='#' && simbolo!='*'); /* Avanca o cursor */
+         if(simbolo=='*') (*minas)+=1;
          matriz[i][j].simbolo = simbolo;
          matriz[i][j].visivel = 0;
          matriz[i][j].n_bombas = 0;
@@ -190,7 +193,7 @@ void imprime_matriz(Elemento **matriz, int linhas, int colunas, char resultado){
 int main(){
    Elemento **matriz; /* Matriz do problema */
    int n_linhas, n_colunas, jogada_i, jogada_j, tmp;
-   int elementos_revelados=0, minas_encontradas=0, total_minas=6, jogadas_validas=0; /* Contadores */
+   int elementos_revelados=0, total_minas=0, jogadas_validas=0;
    char resultado='i', /* Jogador não ganhou nem perdeu */
         aux;
    
@@ -198,8 +201,8 @@ int main(){
    
    matriz=aloca_matriz(n_linhas, n_colunas);
 
-   capta(matriz, n_linhas, n_colunas); /* Capta a matriz passada na entrada */
-   
+   capta(matriz, n_linhas, n_colunas, &total_minas); /* Capta a matriz passada na entrada e conta o total de minas */
+
    contar_bombas_vizinhas(matriz, n_linhas, n_colunas);
 
    aux=getchar();
@@ -217,7 +220,7 @@ int main(){
          break;
       }
       
-      if(minas_encontradas==total_minas){ /* Jogador ganhou */
+      if(elementos_revelados+total_minas == n_linhas*n_colunas){ /* Jogador ganhou */
          resultado='v';
          break;
       }
@@ -227,7 +230,7 @@ int main(){
       } while (aux=='\n');
       
    }
-   printf("Minas: %d\n", minas_encontradas);
+   printf("Minas: %d\n", total_minas);
    printf("Jogadas: %d\n", jogadas_validas);
    printf("Revelados: %d\n", elementos_revelados);
    if(resultado=='v') printf("Resultado: =)\n");
