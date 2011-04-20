@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Estrutura do elemento da matriz */
+/* Estrutura de cada elemento da matriz */
 typedef struct elemento{
    int visivel; /* Booleano que indica se o elemento esta(1) ou nao(0) visivel */
    char simbolo;
@@ -87,7 +87,7 @@ void capta(Elemento **matriz, int n_linhas, int n_colunas, int *minas){
       for(j=0; j<n_colunas; j++){
          do simbolo=getchar(); /* Verifica caracter valido */
          while(simbolo!='#' && simbolo!='*'); /* Avanca o cursor */
-         if(simbolo=='*') (*minas)+=1;
+         if(simbolo=='*') (*minas)+=1; /* Conta o total de minas do jogo */
          matriz[i][j].simbolo = simbolo;
          matriz[i][j].visivel = 0;
          matriz[i][j].n_bombas = 0;
@@ -135,11 +135,11 @@ int executar_jogada(Elemento **matriz, int n_linhas, int n_colunas, int i, int j
    if(matriz[i][j].visivel == 1) return 0; /* So executa a jogada se o elemento nao foi revelado */
    
    if(matriz[i][j].simbolo=='*'){ /* Jogador perdeu */
-      matriz[i][j].visivel = 1; /* Mostra elemento */
+      matriz[i][j].visivel = 1; /* Mostra o elemento */
       return 0;
    }
    
-   if(matriz[i][j].n_bombas>0 && matriz[i][j].n_bombas<9){ /* Existe(m) bombas ao redor do elemento */
+   if(matriz[i][j].n_bombas>0 && matriz[i][j].n_bombas<9){ /* Existe(m) bomba(s) ao redor do elemento */
       matriz[i][j].visivel = 1; /* Mostra elemento */
       return 1; /* Jogada concluida */
    }
@@ -153,30 +153,15 @@ int executar_jogada(Elemento **matriz, int n_linhas, int n_colunas, int i, int j
    return -1;
 }
 
-/* Imprime todos os simbolos da matriz */
-void imprime_matriz_simbolos(Elemento **matriz, int linhas, int colunas){
-   int i, j;
-   
-   for(i=0; i<linhas; i++){
-      for(j=0; j<colunas; j++){
-         if(matriz[i][j].visivel==0) printf("%c", matriz[i][j].simbolo);
-         else if(matriz[i][j].simbolo=='*') printf("%c", matriz[i][j].simbolo);
-         else printf("%d", matriz[i][j].n_bombas);
-      }
-      putchar('\n');
-   }
-
-}
-
 /* Imprime toda a matriz resultante */
 void imprime_matriz(Elemento **matriz, int linhas, int colunas, char resultado){
    int i, j;
    
-   if(resultado=='p')
+   if(resultado=='p') /* Jogador perdeu */
       for(i=0; i<linhas; i++){
          for(j=0; j<colunas; j++)
-            if(matriz[i][j].simbolo=='*') printf("%c", matriz[i][j].simbolo);
-            else if(matriz[i][j].visivel==0) printf("#"); /* Imprime elementos que nao foram revelados */
+            if(matriz[i][j].simbolo=='*') printf("%c", matriz[i][j].simbolo); /* Mostra todas as bombas */
+            else if(matriz[i][j].visivel==0) printf("#"); /* Elementos que nao foram revelados continuam ocultos */
             else printf("%d", matriz[i][j].n_bombas);
          putchar('\n');
       }
@@ -191,7 +176,7 @@ void imprime_matriz(Elemento **matriz, int linhas, int colunas, char resultado){
 
 /* Execucao */
 int main(){
-   Elemento **matriz; /* Matriz do problema */
+   Elemento **matriz; /* Matriz do jogo */
    int n_linhas, n_colunas, jogada_i, jogada_j, tmp;
    int elementos_revelados=0, total_minas=0, jogadas_validas=0;
    char resultado='i', /* Jogador não ganhou nem perdeu */
@@ -206,7 +191,7 @@ int main(){
    contar_bombas_vizinhas(matriz, n_linhas, n_colunas);
 
    aux=getchar();
-   while(aux!=EOF){ /* Se entrarmos no loop, a jogada eh valida */
+   while(aux!=EOF){ /* Lemos as jogadas validas ate o fim do arquivo */
       ungetc(aux, stdin);
 
       scanf("%d %d", &jogada_i, &jogada_j);
@@ -220,8 +205,8 @@ int main(){
          break;
       }
       
-      if(elementos_revelados+total_minas == n_linhas*n_colunas){ /* Jogador ganhou */
-         resultado='v';
+      if(elementos_revelados+total_minas == n_linhas*n_colunas){ /* "n_linhas*n_colunas" = total de elementos */
+         resultado='v'; /* Jogador ganhou */
          break;
       }
       
