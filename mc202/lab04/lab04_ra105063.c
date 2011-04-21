@@ -1,7 +1,7 @@
 /*  UNICAMP - Universidade Estadual de Campinas
     MC202 - Estruturas de Dados
     Aluno: Henrique Vicente Souza - RA: 105063 - Turma D
-    Laboratorio 04 - Campo Minado */
+    Laboratorio 04 - Campo Minado  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -132,7 +132,7 @@ int revelar(Elemento **matriz, int n_linhas, int n_colunas, int i, int j){ /* Re
 int executar_jogada(Elemento **matriz, int n_linhas, int n_colunas, int i, int j){ /* Recebe as posicoes da jogada */
    int p;
 
-   if(matriz[i][j].visivel == 1) return 0; /* So executa a jogada se o elemento nao foi revelado */
+   if(matriz[i][j].visivel == 1) return -1; /* So executa a jogada se o elemento nao foi revelado */
    
    if(matriz[i][j].simbolo=='*'){ /* Jogador perdeu */
       matriz[i][j].visivel = 1; /* Mostra o elemento */
@@ -196,20 +196,21 @@ int main(){
 
       scanf("%d %d", &jogada_i, &jogada_j);
       tmp = executar_jogada(matriz, n_linhas, n_colunas, jogada_i-1, jogada_j-1);
-      jogadas_validas++;
-      elementos_revelados = elementos_revelados + tmp; /* Adiciona caracteres revelados na jogada */
-      
-      if(tmp==0){ /* Jogador perdeu */
-         resultado='p';
-         elementos_revelados+=1;
-         break;
+      if(tmp != -1){ /* Nao executa jogadas iguais */
+         jogadas_validas++;
+         elementos_revelados = elementos_revelados + tmp; /* Adiciona caracteres revelados na jogada */
+         
+         if(tmp==0){ /* Jogador perdeu */
+            resultado='p';
+            elementos_revelados+=1;
+            break;
+         }
+         
+         if(elementos_revelados+total_minas == n_linhas*n_colunas){ /* "n_linhas*n_colunas" = total de elementos */
+            resultado='v'; /* Jogador ganhou */
+            break;
+         }
       }
-      
-      if(elementos_revelados+total_minas == n_linhas*n_colunas){ /* "n_linhas*n_colunas" = total de elementos */
-         resultado='v'; /* Jogador ganhou */
-         break;
-      }
-      
       do{
          aux=getchar();
       } while (aux=='\n');
