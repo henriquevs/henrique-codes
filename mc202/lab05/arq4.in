@@ -1,0 +1,67 @@
+addABB
+addABB
+addABB
+addABB
+addNo 0 1
+addNo 0 2
+addNo 0 3
+addNo 0 5
+addNo 0 8
+addNo 0 13
+addNo 0 21
+addNo 0 34
+addNo 0 55
+addNo 0 89
+alturaABB 0
+folhasABB 0
+imprimirABB 0
+addNo 1 2
+addNo 1 4
+addNo 1 6
+addNo 1 8
+addNo 1 10
+addNo 1 12
+addNo 1 14
+addNo 1 16
+addNo 1 18
+addNo 1 20
+addNo 1 22
+addNo 1 24
+addNo 1 26
+addNo 1 28
+addNo 1 30
+addNo 1 32
+addNo 1 34
+alturaABB 1
+folhasABB 1
+imprimirABB 1
+addNo 2 3
+addNo 2 6
+addNo 2 9
+addNo 2 12
+addNo 2 15
+addNo 2 18
+addNo 2 21
+addNo 2 24
+addNo 2 27
+addNo 2 30
+alturaABB 2
+folhasABB 2
+imprimirABB 2
+addNo 3 1
+addNo 3 4
+addNo 3 7
+addNo 3 10
+addNo 3 13
+addNo 3 16
+addNo 3 19
+addNo 3 22
+addNo 3 25
+addNo 3 28
+addNo 3 31
+alturaABB 3
+folhasABB 3
+imprimirABB 3
+01I
+imprimirABB 4
+

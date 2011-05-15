@@ -1,0 +1,19 @@
+addABB
+addNo 0 1
+addNo 0 2
+addNo 0 3
+addNo 0 4
+addNo 0 5
+alturaABB 0
+alturaABB 1
+imprimirABB 0
+addABB
+addNo 1 10
+addNo 1 9
+addNo 1 8
+addNo 1 7
+addNo 1 6
+folhasABB 0
+folhasABB 1
+imprimirABB 1
+
