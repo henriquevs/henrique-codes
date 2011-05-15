@@ -35,17 +35,13 @@ void teste_memoria_1(BTLista *p){
 // Teste de memoria para alocacao de nos na arvore
 void testa_memoria2(No *q){
    if(q == NULL){
-      printf("Erro na alocacao do no na arvore\n");
+      printf("Erro no malloc do no na arvore\n");
       exit(1);
    }
 }
 
-
-
-
-
-// Cria a ABB (Arvore Binaria de Busca)
-void cria_arvore(BTLista *lista){
+// Insere uma ABB (Arvore Binaria de Busca) na "floresta"
+BTLista *cria_arvore(BTLista *lista){
    BTLista *ant, *q = lista;
    int flag = -1;
    
@@ -57,42 +53,39 @@ void cria_arvore(BTLista *lista){
       q->id = flag + 1;
       q->abb = NULL;
       q->prox = NULL;
+      printf("%d\n", q->id);
       lista = q;
+   }
+   else{
+      while(q!=NULL){ // Insere no meio ou no final
+         flag = q->id;
+         ant=q;
+         q=q->prox;
+      }
+      q=(BTLista*)malloc(sizeof(BTLista));
+
+      teste_memoria_1(q);
       
+      q->id = flag + 1;
+      q->abb = NULL;
+      q->prox = NULL;
+      ant->prox = q;
+      printf("%d\n", q->id);
    }
-   
-   while(q!=NULL){ // Insere no meio ou no final
-      flag = q->id;
-      ant=q;
-      q=q->prox;
-   }
-   q=(BTLista*)malloc(sizeof(BTLista));
-
-   //teste_memoria_1(q);
-   
-   q->id = flag + 1;
-   q->abb = NULL;
-   q->prox = NULL;
-   ant->prox = q;
-   printf("%d\n", q->id);
+   return lista;
 }
-
-
-
-
 
 // Cria um no para a arvore e retorna um ponteiro para a raiz
 No *cria_no(int elemento){
-   No *no_da_arvore=(No*)malloc(sizeof(No));
-   if(no_da_arvore==NULL){
-      printf("Erro no malloc do no\n");
-      exit(1);
-   }
-   no_da_arvore->elem = elemento;
-   no_da_arvore->esq = NULL;
-   no_da_arvore->dir = NULL;
+   No *novo=(No*)malloc(sizeof(No));
    
-   return no_da_arvore;
+   testa_memoria2(novo);
+   
+   novo->elem = elemento;
+   novo->esq = NULL;
+   novo->dir = NULL;
+   
+   return novo;
 }
 
 // Procura a arvore na "floresta"
@@ -120,6 +113,17 @@ void adiciona_no(No* arvore, No* no_da_arvore){
    }
 }
 
+int altura_arvore(No* arvore){
+   int hesq, hdir;
+   if(arvore==NULL) return 0;
+      hesq = altura_arvore(arvore->esq);
+      hdir = altura_arvore(arvore->dir);
+   if(hesq > hdir)
+      return 1+hesq;
+   else
+      return 1+hdir;
+}
+
 /* Converte a opcao da entrada em um inteiro para que seja possivel utilizar "switch" na main */
 int converte(char string[15]){
    int p;
@@ -145,24 +149,30 @@ int main(){
    BTLista *lista=NULL, *aux;
    No* p;
    char string[15];
-   int q, indice, val;
+   int q, indice, val, alturaabb;
    
    while(scanf("%s", string)!= EOF){
       q=converte(string);
    
       switch(q){
-         case 1:
-            cria_arvore(lista);
+         case 1: // Criacao de uma arvore
+            lista=cria_arvore(lista);
             break;
       
-         case 2:
+         case 2: // Insercao de no numa arvore
             scanf(" %d %d", &indice, &val);
             p=cria_no(val);
             aux=procura_arvore(lista, indice);
             if(aux!=NULL)
                adiciona_no(aux->abb, p);
             break;
-            
+         
+         case 3: // Calcula a altura de uma ABB 
+            scanf(" %d", indice);
+            aux=procura_arvore(lista, indice);
+            alturaabb=altura_arvore(aux->abb);
+            printf("Altura da arvore %d: %d.\n", indice, alturaabb);
+            break;
       }
    
    
