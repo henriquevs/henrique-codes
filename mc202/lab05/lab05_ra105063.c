@@ -1,4 +1,4 @@
-// Laboratório 05
+// Laboratório 05 - Opcoes de 1 a 5 funcionam corretamente
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -204,11 +204,11 @@ int main(){
       q=converte(string);
    
       switch(q){
-         case 1: // Criacao de uma arvore
+         case 1: // Criacao de uma ABB
             lista=cria_arvore(lista);
             break;
       
-         case 2: // Insercao de no numa arvore
+         case 2: // Insercao de no numa ABB
             scanf(" %d %d", &indice, &val);
             aux=procura_arvore(lista, indice);
             if(aux!=NULL) // So insere um no numa arvore existente
