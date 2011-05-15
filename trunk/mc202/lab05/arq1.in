@@ -1,0 +1,9 @@
+addABB
+addNo 0 1
+addNo 0 2
+addNo 0 3
+addNo 0 4
+addNo 0 5
+imprimirABB 0
+imprimirABB 1
+

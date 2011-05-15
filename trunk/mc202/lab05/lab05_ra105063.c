@@ -130,6 +130,16 @@ int altura_arvore(No* arvore){
       return 1+hdir;
 }
 
+// Calcula o numero de nos-folha de uma ABB
+int folhas_arvore(No* arvore){
+   if(arvore == NULL)
+      return 0;
+   if(arvore->esq == NULL && arvore->dir == NULL)
+      return 1;
+   else
+      return folhas_arvore(arvore->esq) + folhas_arvore(arvore->dir);
+}
+
 /* Converte a opcao da entrada em um inteiro a fim de poder-se utilizar "switch" na main */
 int converte(char string[15]){
    int p;
@@ -155,7 +165,7 @@ int main(){
    BTLista *lista=NULL, *aux;
    //No* p;
    char string[15];
-   int q, indice, val, alturaabb;
+   int q, indice, val, altura_abb, folhas_abb;
    
    while(scanf("%s", string)!= EOF){
       q=converte(string);
@@ -176,8 +186,19 @@ int main(){
             scanf(" %d", &indice);
             printf("indice capturado: %d\n", indice);
             aux=procura_arvore(lista, indice);
-            alturaabb=altura_arvore(aux->abb);
-            printf("Altura da arvore %d: %d.\n", indice, alturaabb);
+            if(aux!=NULL){ // Soh calcula a altura de uma arvore existente
+               altura_abb=altura_arvore(aux->abb);
+               printf("Altura da arvore %d: %d.\n", indice, altura_abb);
+            }
+            break;
+            
+         case 4: // Calcula o numero de folhas de uma ABB
+            scanf(" %d", &indice);
+            aux=procura_arvore(lista, indice);
+            if(aux!=NULL){
+               folhas_abb=folhas_arvore(aux->abb);
+               printf("Numero de folhas da arvore %d: %d.\n", indice, folhas_abb);
+            }
             break;
       }
    
