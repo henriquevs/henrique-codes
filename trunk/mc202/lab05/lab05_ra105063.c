@@ -40,7 +40,7 @@ void testa_memoria2(No *q){
    }
 }
 
-// Insere uma ABB (Arvore Binaria de Busca) na "floresta"
+// Insere uma ABB (Arvore Binaria de Busca) na lista ligada ("floresta")
 BTLista *cria_arvore(BTLista *lista){
    BTLista *ant, *q = lista;
    int flag = -1;
@@ -92,8 +92,10 @@ No *cria_no(int elemento){
 BTLista* procura_arvore(BTLista *lista, int identificador){
    BTLista *r=lista;
    while(r!=NULL){ // Se entrar no while é porque existe pelo menos uma arvore
-      if(r->id == identificador)
+      if(r->id == identificador){
+         printf("Achou a arvore\n");
          return r; // Retorna um no da lista que contem a arvore
+      }
       r=r->prox;
    }
    // Se sair do while, não existe a arvore procurada ou nao existe nenhuma arvore
@@ -102,17 +104,21 @@ BTLista* procura_arvore(BTLista *lista, int identificador){
 }
 
 // Adiciona um novo no na ABB
-void adiciona_no(No* arvore, No* no_da_arvore){
-   if(arvore == NULL) return; // Ou a arvore esta vazia ou ja encontramos a posicao certa
+No *adiciona_no(No* arvore, int val){
+   No* novo=cria_no(val);
+   if(arvore == NULL)
+      arvore=novo;
    
-   if(arvore->elem != no_da_arvore->elem){
-      if(arvore->elem < no_da_arvore->elem)
-         adiciona_no(arvore->dir, no_da_arvore);
-      else
-         adiciona_no(arvore->esq, no_da_arvore);
+   else {
+      if(arvore->elem < novo->elem) // Insere na esquerda
+         arvore->esq = adiciona_no(arvore->esq, val);
+      else // Insere na direita
+         arvore->dir = adiciona_no(arvore->dir, val);
    }
+   return arvore;
 }
 
+// Calcula a altura de uma ABB
 int altura_arvore(No* arvore){
    int hesq, hdir;
    if(arvore==NULL) return 0;
@@ -124,7 +130,7 @@ int altura_arvore(No* arvore){
       return 1+hdir;
 }
 
-/* Converte a opcao da entrada em um inteiro para que seja possivel utilizar "switch" na main */
+/* Converte a opcao da entrada em um inteiro a fim de poder-se utilizar "switch" na main */
 int converte(char string[15]){
    int p;
    if(strcmp(string, "addABB") == 0)
@@ -147,7 +153,7 @@ int converte(char string[15]){
 
 int main(){
    BTLista *lista=NULL, *aux;
-   No* p;
+   //No* p;
    char string[15];
    int q, indice, val, alturaabb;
    
@@ -161,14 +167,14 @@ int main(){
       
          case 2: // Insercao de no numa arvore
             scanf(" %d %d", &indice, &val);
-            p=cria_no(val);
             aux=procura_arvore(lista, indice);
-            if(aux!=NULL)
-               adiciona_no(aux->abb, p);
+            if(aux!=NULL) // So insere um no numa arvore existente
+               aux->abb = adiciona_no(aux->abb, val);
             break;
          
          case 3: // Calcula a altura de uma ABB 
-            scanf(" %d", indice);
+            scanf(" %d", &indice);
+            printf("indice capturado: %d\n", indice);
             aux=procura_arvore(lista, indice);
             alturaabb=altura_arvore(aux->abb);
             printf("Altura da arvore %d: %d.\n", indice, alturaabb);
