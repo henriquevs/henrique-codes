@@ -25,7 +25,7 @@ typedef struct btlista {
 } BTLista;
 
 // Teste de memoria para alocacao de arvores
-void teste_memoria_1(BTLista *p){
+void testa_memoria1(BTLista *p){
    if(p == NULL){
       printf("Erro no malloc da arvore \n");
       exit(1);
@@ -40,6 +40,14 @@ void testa_memoria2(No *q){
    }
 }
 
+// Teste de memoria para a pilha
+void testa_memoria3(Pilha *topo){
+   if(topo == NULL){
+      fprintf(stderr, "Erro no malloc da pilha\n");
+      exit(1);
+   }
+}
+
 // Insere uma ABB (Arvore Binaria de Busca) na lista ligada ("floresta")
 BTLista *cria_arvore(BTLista *lista){
    BTLista *ant, *q = lista;
@@ -48,7 +56,7 @@ BTLista *cria_arvore(BTLista *lista){
    if(q == NULL){ // "Floresta" vazia; insercao no inicio da lista de arvores
       q = (BTLista*)malloc(sizeof(BTLista));
 
-      teste_memoria_1(q);
+      testa_memoria1(q);
       
       q->id = flag + 1;
       q->abb = NULL;
@@ -64,7 +72,7 @@ BTLista *cria_arvore(BTLista *lista){
       }
       q=(BTLista*)malloc(sizeof(BTLista));
 
-      teste_memoria_1(q);
+      testa_memoria1(q);
       
       q->id = flag + 1;
       q->abb = NULL;
@@ -173,6 +181,58 @@ int imprime_pos_fixa(No* arvore){
    return 1;
 }
 
+// Inicialização da pilha
+Pilha* inicializa(Pilha *topo){
+   topo = NULL;
+   return topo;
+}
+
+typedef enum{FALSE, TRUE} booleano;
+
+// Verifica se a pilha esta vazia; retorna 0 caso seja falso e 1 caso verdadeiro
+booleano vazia(Pilha *topo){
+   return topo==NULL;
+}
+
+// Empilha os valores na pilha
+Pilha *empilhar(Pilha *topo, int val){
+   Pilha *p=(Pilha*)malloc(sizeof(Pilha));
+   
+   testa_memoria3(p);
+   
+   p->num = val;
+   p->prox = NULL;
+   topo = p;
+   return topo;
+}
+
+// Desempilha os valores da pilha e libera a memoria alocada
+int desempilhar(Pilha *topo){
+   int tmp;
+   Pilha *q=topo;
+   if(vazia(q)==1){
+      fprintf(stderr, "Pilha vazia\n");
+      exit(1);
+   }
+   tmp=q->num;
+   topo=topo->prox;
+   free(q);
+   return tmp;
+}
+
+// Capta os valores da arvore em ordem infixa e armazena numa pilha
+Pilha *empilhando_infixa(No *arvore, Pilha *topo){
+   if(arvore!=NULL){
+      topo = empilhando_infixa(arvore->esq, topo);
+      topo = empilhar(topo, arvore->elem);
+      topo = empilhando_infixa(arvore->dir, topo);
+   }
+   return topo;
+}
+
+// Realiza a operação de Uniao entre duas arvores
+//No *uniao(
+
 /* Converte a opcao da entrada em um inteiro a fim de poder-se utilizar "switch" na main */
 int converte(char string[15]){
    int p;
@@ -195,10 +255,10 @@ int converte(char string[15]){
 }
 
 int main(){
-   BTLista *lista=NULL, *aux;
+   BTLista *lista=NULL, *aux, *tmp;
    //No* p;
    char string[15];
-   int q, indice, val, altura_abb, folhas_abb;
+   int q, indice, val, altura_abb, folhas_abb, indice_arv1, indice_arv2;
    
    while(scanf("%s", string)!= EOF){
       q=converte(string);
@@ -259,6 +319,22 @@ int main(){
                printf("\n");
             }
             break;
+            
+            default:
+               //printf("string capturada: %s\n", string);
+               //printf("primeiro char:%c; segundo char:%c; terceiro char:%c\n", string[0], string[1], string[2]);
+               if(string[2] != 'U' && string[2] != 'I')
+                  printf("Operacao invalida no default\n");
+               else{
+                  //printf("Primeiro  -  indices:\narvore1:%c\tarvore2:%c\n\n", string[0], string[1]);
+                  indice_arv1=(int)(string[0]) - 48;
+                  indice_arv2=(int)(string[1]) - 48;
+                  aux=procura_arvore(lista, indice_arv1);
+                  tmp=procura_arvore(lista, indice_arv2);
+                  if(aux!=NULL && tmp!=NULL)
+                     printf("Indices:\narvore1:%d\tarvore2:%d\n", indice_arv1, indice_arv2);
+               }
+               break;
       }
    
    
