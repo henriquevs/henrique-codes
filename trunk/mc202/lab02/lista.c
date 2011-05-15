@@ -54,7 +54,7 @@ User *buscaUsuario(User *lista, int id){
 User *cria_usuario(int id, char *name, User* proximo){
    User *p; /* "p" eh um ponteiro para o novo no */
    p = (User*)malloc(sizeof(User));
-  
+   
    memoria_insuficiente(p); /* Verificacao */
    
    strcpy(p->nome, name);

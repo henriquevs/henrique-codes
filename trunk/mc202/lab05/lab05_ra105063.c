@@ -110,7 +110,7 @@ No *adiciona_no(No* arvore, int val){
       arvore=novo;
    
    else {
-      if(arvore->elem < novo->elem) // Insere na esquerda
+      if(arvore->elem > novo->elem) // Insere na esquerda
          arvore->esq = adiciona_no(arvore->esq, val);
       else // Insere na direita
          arvore->dir = adiciona_no(arvore->dir, val);
@@ -138,6 +138,39 @@ int folhas_arvore(No* arvore){
       return 1;
    else
       return folhas_arvore(arvore->esq) + folhas_arvore(arvore->dir);
+}
+
+// Imprime a ABB em ordem pre-fixa
+int imprime_pre_fixa(No* arvore){
+   if(arvore==NULL) return 0;
+   if(arvore!=NULL){
+   printf("%d ", arvore->elem);
+   imprime_pre_fixa(arvore->esq);
+   imprime_pre_fixa(arvore->dir);
+   }
+   return 1;
+}
+
+// Imprime a ABB em ordem in-fixa
+int imprime_in_fixa(No* arvore){
+   //if(arvore==NULL) return 0;
+   if(arvore!=NULL){
+   imprime_in_fixa(arvore->esq);
+   printf("%d ", arvore->elem);
+   imprime_in_fixa(arvore->dir);
+   }
+   return 1;
+}
+
+// Imprime a ABB em ordem pos-fixa
+int imprime_pos_fixa(No* arvore){
+   if(arvore==NULL) return 0;
+   if(arvore!=NULL){
+   imprime_pos_fixa(arvore->esq);
+   imprime_pos_fixa(arvore->dir);
+   printf("%d ", arvore->elem);
+   }
+   return 1;
 }
 
 /* Converte a opcao da entrada em um inteiro a fim de poder-se utilizar "switch" na main */
@@ -186,18 +219,44 @@ int main(){
             scanf(" %d", &indice);
             printf("indice capturado: %d\n", indice);
             aux=procura_arvore(lista, indice);
-            if(aux!=NULL){ // Soh calcula a altura de uma arvore existente
+            if(aux!=NULL){ // Soh calcula a altura de uma ABB existente
                altura_abb=altura_arvore(aux->abb);
                printf("Altura da arvore %d: %d.\n", indice, altura_abb);
             }
             break;
             
-         case 4: // Calcula o numero de folhas de uma ABB
+         case 4: // Soh calcula o numero de folhas de uma ABB existente
             scanf(" %d", &indice);
             aux=procura_arvore(lista, indice);
             if(aux!=NULL){
                folhas_abb=folhas_arvore(aux->abb);
                printf("Numero de folhas da arvore %d: %d.\n", indice, folhas_abb);
+            }
+            break;
+            
+         case 5: //Imprime a ABB (em notações prefixa, infixa e posfixa)
+            scanf(" %d", &indice);
+            aux=procura_arvore(lista, indice);
+            // Em todos os casos, imprime somente quando a arvore existe e ela nao eh vazia
+            if(aux!=NULL){
+               
+               printf("Pre-ordem:\t");
+               val=imprime_pre_fixa(aux->abb);
+               if(val==1)
+                  ungetc(' ',stdin);
+               printf("\n");
+               
+               printf("In-ordem:\t");
+               val=imprime_in_fixa(aux->abb);
+               if(val==1)
+                  ungetc(' ',stdin);
+               printf("\n");
+               
+               printf("Pos-ordem:\t");
+               val=imprime_pos_fixa(aux->abb);
+               if(val==1)
+                  ungetc(' ',stdin);
+               printf("\n");
             }
             break;
       }
