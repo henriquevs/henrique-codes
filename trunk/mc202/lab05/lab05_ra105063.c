@@ -61,7 +61,7 @@ BTLista *cria_arvore(BTLista *lista){
       q->id = flag + 1;
       q->abb = NULL;
       q->prox = NULL;
-      printf("%d\n", q->id);
+      //printf("Indice da arvore criada: %d\n", q->id);
       lista = q;
    }
    else{
@@ -78,7 +78,7 @@ BTLista *cria_arvore(BTLista *lista){
       q->abb = NULL;
       q->prox = NULL;
       ant->prox = q;
-      printf("%d\n", q->id);
+      //printf("Indice da arvore criada: %d\n", q->id);
    }
    return lista;
 }
@@ -101,7 +101,7 @@ BTLista* procura_arvore(BTLista *lista, int identificador){
    BTLista *r=lista;
    while(r!=NULL){ // Se entrar no while é porque existe pelo menos uma arvore
       if(r->id == identificador){
-         printf("Achou a arvore\n");
+         //printf("Achou a arvore %d\n", r->id);
          return r; // Retorna um no da lista que contem a arvore
       }
       r=r->prox;
@@ -181,12 +181,6 @@ int imprime_pos_fixa(No* arvore){
    return 1;
 }
 
-// Inicialização da pilha
-Pilha* inicializa(Pilha *topo){
-   topo = NULL;
-   return topo;
-}
-
 typedef enum{FALSE, TRUE} booleano;
 
 // Verifica se a pilha esta vazia; retorna 0 caso seja falso e 1 caso verdadeiro
@@ -201,21 +195,21 @@ Pilha *empilhar(Pilha *topo, int val){
    testa_memoria3(p);
    
    p->num = val;
-   p->prox = NULL;
+   p->prox = topo;
    topo = p;
    return topo;
 }
 
 // Desempilha os valores da pilha e libera a memoria alocada
-int desempilhar(Pilha *topo){
+int desempilhar(Pilha **topo){
    int tmp;
-   Pilha *q=topo;
+   Pilha *q=*topo;
    if(vazia(q)==1){
       fprintf(stderr, "Pilha vazia\n");
       exit(1);
    }
    tmp=q->num;
-   topo=topo->prox;
+   *topo=(*topo)->prox;
    free(q);
    return tmp;
 }
@@ -230,8 +224,45 @@ Pilha *empilhando_infixa(No *arvore, Pilha *topo){
    return topo;
 }
 
-// Realiza a operação de Uniao entre duas arvores
-//No *uniao(
+No *uniao(Pilha **pilha1, Pilha **pilha2, No* arvore_resultante){
+   int valor;
+   while(*pilha1 != NULL){
+      valor=desempilhar(pilha1);
+      arvore_resultante = adiciona_no(arvore_resultante, valor);
+   }
+   //printf("Saiu do primeiro while\n");
+   while(*pilha2 != NULL){
+      valor=desempilhar(pilha2);
+      arvore_resultante = adiciona_no(arvore_resultante, valor);
+   }
+   //printf("Saiu do segundo while\n");
+   return arvore_resultante;
+}
+
+No *interseccao(Pilha **pilha1, Pilha **pilha2, No *arvore_resultante){
+   int valor;
+   while(*pilha1!=NULL && *pilha2 != NULL){ // As pilhas estao ordenadas na ordem do maior para o menor elemento, a partir do topo
+      if((*pilha1)->num > (*pilha2)->num) desempilhar(pilha1);
+      else if((*pilha1)->num < (*pilha2)->num) desempilhar(pilha2);
+      else{
+         valor=desempilhar(pilha1);
+         desempilhar(pilha2);
+         arvore_resultante = adiciona_no(arvore_resultante, valor);
+      }
+   }
+   // Termina de desempilhar as pilhas nao vazias
+   while(*pilha1!=NULL) desempilhar(pilha1);
+   while(*pilha2!=NULL) desempilhar(pilha2);
+   
+   return arvore_resultante;
+}
+
+BTLista *encontra_ultimo(BTLista *lista){
+   BTLista *aux=lista;
+   if(aux==NULL) return NULL;
+   while(aux->prox!=NULL) aux=aux->prox;
+   return aux;
+}
 
 /* Converte a opcao da entrada em um inteiro a fim de poder-se utilizar "switch" na main */
 int converte(char string[15]){
@@ -255,8 +286,8 @@ int converte(char string[15]){
 }
 
 int main(){
-   BTLista *lista=NULL, *aux, *tmp;
-   //No* p;
+   BTLista *lista=NULL, *aux, *tmp, *nova_arvore;
+   Pilha *pilha1=NULL, *pilha2=NULL;
    char string[15];
    int q, indice, val, altura_abb, folhas_abb, indice_arv1, indice_arv2;
    
@@ -277,7 +308,7 @@ int main(){
          
          case 3: // Calcula a altura de uma ABB 
             scanf(" %d", &indice);
-            printf("indice capturado: %d\n", indice);
+            //printf("indice capturado: %d\n", indice);
             aux=procura_arvore(lista, indice);
             if(aux!=NULL){ // Soh calcula a altura de uma ABB existente
                altura_abb=altura_arvore(aux->abb);
@@ -319,26 +350,32 @@ int main(){
                printf("\n");
             }
             break;
-            
+
             default:
-               //printf("string capturada: %s\n", string);
-               //printf("primeiro char:%c; segundo char:%c; terceiro char:%c\n", string[0], string[1], string[2]);
-               if(string[2] != 'U' && string[2] != 'I')
-                  printf("Operacao invalida no default\n");
-               else{
-                  //printf("Primeiro  -  indices:\narvore1:%c\tarvore2:%c\n\n", string[0], string[1]);
-                  indice_arv1=(int)(string[0]) - 48;
-                  indice_arv2=(int)(string[1]) - 48;
+               if(string[2] == 'U' || string[2] == 'I'){
+                  indice_arv1=(int)(string[0]) - '0';
+                  indice_arv2=(int)(string[1]) - '0';
                   aux=procura_arvore(lista, indice_arv1);
                   tmp=procura_arvore(lista, indice_arv2);
-                  if(aux!=NULL && tmp!=NULL)
-                     printf("Indices:\narvore1:%d\tarvore2:%d\n", indice_arv1, indice_arv2);
+                  
+                  if(aux!=NULL && tmp!=NULL){ // Arvore requisitadas existem
+                     pilha1 = empilhando_infixa(aux->abb, pilha1);
+                     //printf("Empilhou o primeiro\n");
+                     pilha2 = empilhando_infixa(tmp->abb, pilha2);
+                     //printf("Empilhou o segundo\n");
+                     
+                     lista=cria_arvore(lista);
+
+                     nova_arvore=encontra_ultimo(lista);
+                     
+                     if(string[2] == 'U') // Uniao  
+                        nova_arvore->abb = uniao(&pilha1, &pilha2, nova_arvore->abb);
+                     else
+                        nova_arvore->abb = interseccao(&pilha1, &pilha2, nova_arvore->abb);
+                  }
                }
                break;
       }
-   
-   
-   
    }
    return 0;
 }
