@@ -113,14 +113,13 @@ BTLista* procura_arvore(BTLista *lista, int identificador){
 
 // Adiciona um novo no na ABB
 No *adiciona_no(No* arvore, int val){
-   No* novo=cria_no(val);
    if(arvore == NULL)
-      arvore=novo;
+      arvore=cria_no(val);
    
    else {
-      if(arvore->elem > novo->elem) // Insere na esquerda
+      if(arvore->elem > val) // Insere na esquerda
          arvore->esq = adiciona_no(arvore->esq, val);
-      else // Insere na direita
+      else if(arvore->elem < val) // Insere na direita
          arvore->dir = adiciona_no(arvore->dir, val);
    }
    return arvore;
@@ -264,6 +263,29 @@ BTLista *encontra_ultimo(BTLista *lista){
    return aux;
 }
 
+void liberar_nos(No *arvore){
+   if(arvore!=NULL){
+      if(arvore->esq==NULL && arvore->dir==NULL)
+         free(arvore);
+      else{
+         liberar_nos(arvore->esq);
+         liberar_nos(arvore->dir);
+         free(arvore);
+      }
+   }
+}
+
+void liberar_toda_memoria_alocada(BTLista **lista){
+   BTLista *ant;
+   while((*lista)!=NULL){
+      ant=(*lista);
+      (*lista)=(*lista)->prox;
+      liberar_nos(ant->abb);
+      free(ant);
+   }
+   
+}
+
 /* Converte a opcao da entrada em um inteiro a fim de poder-se utilizar "switch" na main */
 int converte(char string[15]){
    int p;
@@ -377,5 +399,7 @@ int main(){
                break;
       }
    }
+   liberar_toda_memoria_alocada(&lista);
+   
    return 0;
 }
