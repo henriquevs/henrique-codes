@@ -1,5 +1,8 @@
-// Laboratório 05 - Opcoes de 1 a 5 funcionam corretamente
-
+/*  UNICAMP - Universidade Estadual de Campinas
+    MC202 - Estruturas de Dados
+    Aluno: Henrique Vicente Souza - RA: 105063 - Turma D
+    Laboratorio 05 - Árvore Binária de Busca e Pilhas  */
+    
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,16 +55,12 @@ void testa_memoria3(Pilha *topo){
 BTLista *cria_arvore(BTLista *lista){
    BTLista *ant, *q = lista;
    int flag = -1;
-   
    if(q == NULL){ // "Floresta" vazia; insercao no inicio da lista de arvores
       q = (BTLista*)malloc(sizeof(BTLista));
-
       testa_memoria1(q);
-      
       q->id = flag + 1;
       q->abb = NULL;
       q->prox = NULL;
-      //printf("Indice da arvore criada: %d\n", q->id);
       lista = q;
    }
    else{
@@ -71,14 +70,11 @@ BTLista *cria_arvore(BTLista *lista){
          q=q->prox;
       }
       q=(BTLista*)malloc(sizeof(BTLista));
-
       testa_memoria1(q);
-      
       q->id = flag + 1;
       q->abb = NULL;
       q->prox = NULL;
       ant->prox = q;
-      //printf("Indice da arvore criada: %d\n", q->id);
    }
    return lista;
 }
@@ -86,13 +82,10 @@ BTLista *cria_arvore(BTLista *lista){
 // Cria um no para a arvore e retorna um ponteiro para a raiz
 No *cria_no(int elemento){
    No *novo=(No*)malloc(sizeof(No));
-   
    testa_memoria2(novo);
-   
    novo->elem = elemento;
    novo->esq = NULL;
    novo->dir = NULL;
-   
    return novo;
 }
 
@@ -106,7 +99,6 @@ BTLista* procura_arvore(BTLista *lista, int identificador){
       }
       r=r->prox;
    }
-   // Se sair do while, não existe a arvore procurada ou nao existe nenhuma arvore
    printf("Nao existe arvore.\n");
    return NULL;
 }
@@ -115,7 +107,6 @@ BTLista* procura_arvore(BTLista *lista, int identificador){
 No *adiciona_no(No* arvore, int val){
    if(arvore == NULL)
       arvore=cria_no(val);
-   
    else {
       if(arvore->elem > val) // Insere na esquerda
          arvore->esq = adiciona_no(arvore->esq, val);
@@ -190,9 +181,7 @@ booleano vazia(Pilha *topo){
 // Empilha os valores na pilha
 Pilha *empilhar(Pilha *topo, int val){
    Pilha *p=(Pilha*)malloc(sizeof(Pilha));
-   
    testa_memoria3(p);
-   
    p->num = val;
    p->prox = topo;
    topo = p;
@@ -223,21 +212,21 @@ Pilha *empilhando_infixa(No *arvore, Pilha *topo){
    return topo;
 }
 
+// Realiza a uniao de duas ABB
 No *uniao(Pilha **pilha1, Pilha **pilha2, No* arvore_resultante){
    int valor;
    while(*pilha1 != NULL){
       valor=desempilhar(pilha1);
       arvore_resultante = adiciona_no(arvore_resultante, valor);
    }
-   //printf("Saiu do primeiro while\n");
    while(*pilha2 != NULL){
       valor=desempilhar(pilha2);
       arvore_resultante = adiciona_no(arvore_resultante, valor);
    }
-   //printf("Saiu do segundo while\n");
    return arvore_resultante;
 }
 
+// Realiza a interseccao de duas ABB
 No *interseccao(Pilha **pilha1, Pilha **pilha2, No *arvore_resultante){
    int valor;
    while(*pilha1!=NULL && *pilha2 != NULL){ // As pilhas estao ordenadas na ordem do maior para o menor elemento, a partir do topo
@@ -249,10 +238,9 @@ No *interseccao(Pilha **pilha1, Pilha **pilha2, No *arvore_resultante){
          arvore_resultante = adiciona_no(arvore_resultante, valor);
       }
    }
-   // Termina de desempilhar as pilhas nao vazias
+   // Termina de desempilhar quando existem pilhas nao vazias
    while(*pilha1!=NULL) desempilhar(pilha1);
    while(*pilha2!=NULL) desempilhar(pilha2);
-   
    return arvore_resultante;
 }
 
@@ -263,6 +251,7 @@ BTLista *encontra_ultimo(BTLista *lista){
    return aux;
 }
 
+// Libera todos os nos de uma ABB
 void liberar_nos(No *arvore){
    if(arvore!=NULL){
       if(arvore->esq==NULL && arvore->dir==NULL)
@@ -275,6 +264,7 @@ void liberar_nos(No *arvore){
    }
 }
 
+// Libera todos os nos da lista ligada (floresta) que contem as arvores
 void liberar_toda_memoria_alocada(BTLista **lista){
    BTLista *ant;
    while((*lista)!=NULL){
@@ -283,7 +273,6 @@ void liberar_toda_memoria_alocada(BTLista **lista){
       liberar_nos(ant->abb);
       free(ant);
    }
-   
 }
 
 /* Converte a opcao da entrada em um inteiro a fim de poder-se utilizar "switch" na main */
@@ -303,7 +292,6 @@ int converte(char string[15]){
    
    if(strcmp(string, "imprimirABB") == 0)
       p = 5;
-   
    return p;
 }
 
@@ -338,7 +326,7 @@ int main(){
             }
             break;
             
-         case 4: // Soh calcula o numero de folhas de uma ABB existente
+         case 4: // Calcula o numero de folhas de uma ABB existente
             scanf(" %d", &indice);
             aux=procura_arvore(lista, indice);
             if(aux!=NULL){
@@ -347,10 +335,10 @@ int main(){
             }
             break;
             
-         case 5: //Imprime a ABB (em notações prefixa, infixa e posfixa)
+         case 5: //Imprime a ABB (em notações prefixa, infixa e posfixa, respectivamente)
             scanf(" %d", &indice);
             aux=procura_arvore(lista, indice);
-            // Em todos os casos, imprime somente quando a arvore existe e ela nao eh vazia
+            // Em todos os casos, imprime somente quando a arvore existe e nao eh vazia
             if(aux!=NULL){
                
                printf("Pre-ordem:\t");
@@ -374,25 +362,21 @@ int main(){
             break;
 
             default:
-               if(string[2] == 'U' || string[2] == 'I'){
+               if(string[2] == 'U' || string[2] == 'I'){ // Promove a uniao ou interseccao de duas ABB
                   indice_arv1=(int)(string[0]) - '0';
                   indice_arv2=(int)(string[1]) - '0';
                   aux=procura_arvore(lista, indice_arv1);
                   tmp=procura_arvore(lista, indice_arv2);
                   
-                  if(aux!=NULL && tmp!=NULL){ // Arvore requisitadas existem
+                  if(aux!=NULL && tmp!=NULL){ // Arvores requisitadas existem
                      pilha1 = empilhando_infixa(aux->abb, pilha1);
-                     //printf("Empilhou o primeiro\n");
                      pilha2 = empilhando_infixa(tmp->abb, pilha2);
-                     //printf("Empilhou o segundo\n");
-                     
                      lista=cria_arvore(lista);
-
                      nova_arvore=encontra_ultimo(lista);
                      
                      if(string[2] == 'U') // Uniao  
                         nova_arvore->abb = uniao(&pilha1, &pilha2, nova_arvore->abb);
-                     else
+                     else // Interseccao
                         nova_arvore->abb = interseccao(&pilha1, &pilha2, nova_arvore->abb);
                   }
                }
