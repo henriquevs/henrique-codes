@@ -1,7 +1,7 @@
 /*  UNICAMP - Universidade Estadual de Campinas
     MC202 - Estruturas de Dados
     Aluno: Henrique Vicente Souza - RA: 105063 - Turma D
-    Laboratorio 05 - Árvore Binária de Busca e Pilhas  */
+    Laboratorio 05 - Arvore Binaria de Busca e Pilhas  */
     
 #include <stdio.h>
 #include <stdlib.h>
@@ -151,7 +151,7 @@ int imprime_pre_fixa(No* arvore){
 
 // Imprime a ABB em ordem in-fixa
 int imprime_in_fixa(No* arvore){
-   //if(arvore==NULL) return 0;
+   if(arvore==NULL) return 0;
    if(arvore!=NULL){
    imprime_in_fixa(arvore->esq);
    printf("%d ", arvore->elem);
@@ -264,7 +264,7 @@ void liberar_nos(No *arvore){
    }
 }
 
-// Libera todos os nos da lista ligada (floresta) que contem as arvores
+// Libera todos os nos da lista ligada ("floresta") que contem as arvores
 void liberar_toda_memoria_alocada(BTLista **lista){
    BTLista *ant;
    while((*lista)!=NULL){
@@ -318,7 +318,6 @@ int main(){
          
          case 3: // Calcula a altura de uma ABB 
             scanf(" %d", &indice);
-            //printf("indice capturado: %d\n", indice);
             aux=procura_arvore(lista, indice);
             if(aux!=NULL){ // Soh calcula a altura de uma ABB existente
                altura_abb=altura_arvore(aux->abb);
