@@ -54,7 +54,8 @@ int get_pos(int n_linhas, int n_colunas, int i, int j){ // "i" = posicao na linh
       return (i*n_colunas+j);
 }
 
-// "Caminha" na componente conexa que pode ser um vertice e retorna o numero de pixels desta componente
+// "Caminha" na possivel componente conexa e retorna sua quantidade de  pixels
+// Sinalizo o possivel vertice conexa com o valor '13' para poder analisar outros possiveis candidatos a vertices
 void encontra_vertices(Vertice *p, unsigned char *imagem, int n_linhas, int n_colunas, int i, int j){ // "i" = posicao na linha e "j" = posicao na coluna
    
    p->numero_pixels++; // Conta os pixels presentes na componente conexa
@@ -105,10 +106,9 @@ void encontra_vertices(Vertice *p, unsigned char *imagem, int n_linhas, int n_co
       imagem[get_pos(n_linhas, n_colunas, i-1, j-1)] = 13;
       encontra_vertices(p, imagem, n_linhas, n_colunas, i-1, j-1);
    }
-   //return p;
 }
 
-// Cria um no candidato a vertice
+// Cria e retorna um ponteiro para o candidato a vertice
 Vertice *cria_no_vertice(Vertice *p, int n_linhas, int n_colunas){
    p=(Vertice*)malloc(sizeof(Vertice));
    verifica_memoria_vertice(p);
@@ -155,15 +155,6 @@ Vertice *add_lista_vertices(Vertice *lista, Vertice *p){
       }
    }
    return lista;
-}
-
-void preenche_posicoes_vertices(Vertice *lista){
-   Vertice *aux=lista;
-   while(aux!=NULL){
-      aux->pos_linha_vertice=(((aux->max_linha_vertice - aux->min_linha_vertice)/2) + aux->min_linha_vertice);
-      aux->pos_coluna_vertice=(((aux->max_coluna_vertice - aux->min_coluna_vertice)/2) + aux->min_coluna_vertice);
-      aux=aux->prox;
-   }
 }
 
 void imprime_vertices(Vertice *lista){
@@ -221,10 +212,12 @@ int main(){
             imagem[get_pos(n_linhas, n_colunas, i, j)]=13;
 	    encontra_vertices(p, imagem, n_linhas, n_colunas, i, j);
 	    
-	    if((p->numero_pixels) >= 3000){ // Encontramos um vertice
+	    if((p->numero_pixels) >= 3000){ // Encontramos um vertices
+
 	       // Calcula as posicoes na linha e coluna
 	       p->pos_linha_vertice = ((p->max_linha_vertice - p->min_linha_vertice)/2) + p->min_linha_vertice;
 	       p->pos_coluna_vertice = ((p->max_coluna_vertice - p->min_coluna_vertice)/2) + p->min_coluna_vertice;
+	       
 	       lista=add_lista_vertices(lista, p); // Adiciona o novo vertice na lista ligada
 	    }
 	    else free(p);// Candidato nao eh vertice
