@@ -114,7 +114,7 @@ Vertice *cria_no_vertice(Vertice *p, int n_linhas, int n_colunas){
    verifica_memoria_vertice(p);
    p->numero_pixels=0;
    p->min_linha_vertice=n_linhas;
-   p->min_coluna_vertice=n_linhas;
+   p->min_coluna_vertice=n_colunas;
    p->max_linha_vertice=0;
    p->max_coluna_vertice=0;
    p->prox=NULL;
@@ -130,7 +130,7 @@ Vertice *add_lista_vertices(Vertice *lista, Vertice *p){
       lista=p;
    }
    else{
-      if(p->pos_linha_vertice < aux->pos_linha_vertice || (p->pos_linha_vertice = aux->pos_linha_vertice && p->pos_coluna_vertice < aux->pos_coluna_vertice) ){ // Insere no comeco
+      if(p->pos_linha_vertice < aux->pos_linha_vertice || (p->pos_linha_vertice == aux->pos_linha_vertice && p->pos_coluna_vertice < aux->pos_coluna_vertice) ){ // Insere no comeco
 	 p->prox=aux;
 	 p->num_vertice=aux->num_vertice; // Determina o indice do novo vertice
 	 while(aux!=NULL){ // Atualiza os indices de todos os vertices da lista que estao localizados apos o vertice que foi inserido
@@ -140,14 +140,14 @@ Vertice *add_lista_vertices(Vertice *lista, Vertice *p){
 	 lista=p;
       }
       else{ // Insere no meio ou no final
-	 //while(aux!=NULL && (p->num_vertice) > aux->num_vertice){
-	 while((aux!=NULL && p->pos_linha_vertice > aux->pos_linha_vertice) || (p->pos_linha_vertice = aux->pos_linha_vertice && p->pos_coluna_vertice > aux->pos_coluna_vertice)){
+	 while(aux!=NULL && ((p->pos_linha_vertice > aux->pos_linha_vertice) || (p->pos_linha_vertice == aux->pos_linha_vertice && p->pos_coluna_vertice > aux->pos_coluna_vertice))){
 	    ant=aux;
 	    aux=aux->prox;
 	 }
 	 ant->prox=p;
 	 p->prox=aux;
-	 p->num_vertice=aux->num_vertice; // Determina o indice do novo vertice
+	 if(aux!=NULL) p->num_vertice=aux->num_vertice; // Determina o indice do novo vertice
+	 else p->num_vertice=ant->num_vertice+1; // Caso em que estamos inserindo 'p' na ultima posicao da lista
 	 while(aux!=NULL){ // Atualiza os indices de todos os vertices da lista que estao localizados apos o vertice que foi inserido
 	    aux->num_vertice++;
 	    aux=aux->prox;
@@ -155,6 +155,23 @@ Vertice *add_lista_vertices(Vertice *lista, Vertice *p){
       }
    }
    return lista;
+}
+
+void preenche_posicoes_vertices(Vertice *lista){
+   Vertice *aux=lista;
+   while(aux!=NULL){
+      aux->pos_linha_vertice=(((aux->max_linha_vertice - aux->min_linha_vertice)/2) + aux->min_linha_vertice);
+      aux->pos_coluna_vertice=(((aux->max_coluna_vertice - aux->min_coluna_vertice)/2) + aux->min_coluna_vertice);
+      aux=aux->prox;
+   }
+}
+
+void imprime_vertices(Vertice *lista){
+   Vertice *aux=lista;
+   while(aux!=NULL){
+      printf("Vertice %d: pixels[%d], posicao[%d, %d], Min[%d, %d], Max[%d, %d]\n", aux->num_vertice, aux->numero_pixels, aux->pos_linha_vertice, aux->pos_coluna_vertice, aux->min_linha_vertice, aux->min_coluna_vertice, aux->max_linha_vertice, aux->max_coluna_vertice);
+      aux=aux->prox;
+   }
 }
 
 int main(){
@@ -196,25 +213,25 @@ int main(){
       if(imagem[i] != 0 && imagem[i]!= 128) 
          imagem[i]=255; // Manipulacao da imagem para eliminar lixo a fim de poder analisar os candidatos a vértices e arestas 
    
-   p=cria_no_vertice(p, n_linhas, n_colunas); // cria o candidado a vertice
-   
    // Le a imagem e cria uma lista ligada simples com os vertices encontrados
    for(i=0; i<n_linhas; i++)
-      for(j=0; j<n_colunas; j++)
+      for(j=0; j<n_colunas; j++){
+	 p=cria_no_vertice(p, n_linhas, n_colunas); // cria o candidado a vertice
          if(imagem[get_pos(n_linhas, n_colunas, i, j)]==0){
             imagem[get_pos(n_linhas, n_colunas, i, j)]=13;
 	    encontra_vertices(p, imagem, n_linhas, n_colunas, i, j);
 	    
 	    if((p->numero_pixels) >= 3000){ // Encontramos um vertice
+	       // Calcula as posicoes na linha e coluna
 	       p->pos_linha_vertice = ((p->max_linha_vertice - p->min_linha_vertice)/2) + p->min_linha_vertice;
 	       p->pos_coluna_vertice = ((p->max_coluna_vertice - p->min_coluna_vertice)/2) + p->min_coluna_vertice;
 	       lista=add_lista_vertices(lista, p); // Adiciona o novo vertice na lista ligada
 	    }
-	    
-         }
-
-   printf("P2\n%d %d\n%d\n", n_colunas, n_linhas, val_maximo);
-   imprime_imagem(imagem, n_linhas, n_colunas);
+	    else free(p);// Candidato nao eh vertice
+	 }
+      }
+   
+   imprime_vertices(lista);
    
    return 0;
 }
