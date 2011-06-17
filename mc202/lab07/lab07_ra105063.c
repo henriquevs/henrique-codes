@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define COR_FUNDO 200
+
 typedef struct vertice{
    int num_vertice;
    int pos_linha_vertice;
@@ -16,7 +18,9 @@ typedef struct vertice{
 } Vertice;
 
 typedef struct aresta{
-   int num_aresta;
+   // Ao criar aresta, inicializar os ponteiros con 'NULL'
+   Vertice *a;
+   Vertice *b;
    struct aresta *prox;
 } Aresta;
 
@@ -55,7 +59,7 @@ int get_pos(int n_linhas, int n_colunas, int i, int j){ // "i" = posicao na linh
 }
 
 // "Caminha" na possivel componente conexa e retorna sua quantidade de  pixels
-// Sinalizo o possivel vertice conexa com o valor '13' para poder analisar outros possiveis candidatos a vertices
+// Sinalizo o possivel vertice com o valor '13' para poder analisar outros possiveis candidatos a vertices
 void encontra_vertices(Vertice *p, unsigned char *imagem, int n_linhas, int n_colunas, int i, int j){ // "i" = posicao na linha e "j" = posicao na coluna
    
    p->numero_pixels++; // Conta os pixels presentes na componente conexa
@@ -165,6 +169,33 @@ void imprime_vertices(Vertice *lista){
    }
 }
 
+// Altera os valores dos pixels de um vertice, de 13 para 14
+void troca_valor_componente(int i, int j, unsigned char *imagem ,int n_linhas, int n_colunas, unsigned char cor_atual, unsigned cor_futura){ // 'i' e 'j' indicam a minha posicao na imagem
+   int aux = get_pos(n_linhas, n_colunas, i, j);
+  
+   if(aux!=-1 && imagem[aux] == cor_atual){
+   
+      imagem[aux]=cor_futura;
+      
+      // Chama a funcao recursivamente para os oito vizinhos
+      troca_valor_componente(i+1, j, imagem, n_linhas, n_colunas, cor_atual, cor_futura); // Abaixo
+      
+      troca_valor_componente(i-1, j, imagem, n_linhas, n_colunas, cor_atual, cor_futura); // Acima
+      
+      troca_valor_componente(i, j+1, imagem, n_linhas, n_colunas, cor_atual, cor_futura); // Direita
+
+      troca_valor_componente(i, j-1, imagem, n_linhas, n_colunas, cor_atual, cor_futura); // Esquerda
+      
+      troca_valor_componente(i+1, j+1, imagem, n_linhas, n_colunas, cor_atual, cor_futura); // Abaixo e Esquerda
+      
+      troca_valor_componente(i+1, j-1, imagem, n_linhas, n_colunas, cor_atual, cor_futura); // Abaixo e Direita
+      
+      troca_valor_componente(i-1, j+1, imagem, n_linhas, n_colunas, cor_atual, cor_futura); // Acima e Esquerda
+      
+      troca_valor_componente(i-1, j-1, imagem, n_linhas, n_colunas, cor_atual, cor_futura); // Acima e direita
+   }
+}
+
 int main(){
    char tipo[2];
    char tmp;
@@ -202,7 +233,7 @@ int main(){
    
    for(i=0; i<n_linhas*n_colunas; i++)
       if(imagem[i] != 0 && imagem[i]!= 128) 
-         imagem[i]=255; // Manipulacao da imagem para eliminar lixo a fim de poder analisar os candidatos a vértices e arestas 
+         imagem[i]=COR_FUNDO; // Manipulacao da imagem para eliminar lixo a fim de poder analisar os candidatos a vértices e arestas 
    
    // Le a imagem e cria uma lista ligada simples com os vertices encontrados
    for(i=0; i<n_linhas; i++)
@@ -212,7 +243,7 @@ int main(){
             imagem[get_pos(n_linhas, n_colunas, i, j)]=13;
 	    encontra_vertices(p, imagem, n_linhas, n_colunas, i, j);
 	    
-	    if((p->numero_pixels) >= 3000){ // Encontramos um vertices
+	    if((p->numero_pixels) >= 3000){ // Encontramos um vertice
 
 	       // Calcula as posicoes na linha e coluna
 	       p->pos_linha_vertice = ((p->max_linha_vertice - p->min_linha_vertice)/2) + p->min_linha_vertice;
@@ -220,9 +251,15 @@ int main(){
 	       
 	       lista=add_lista_vertices(lista, p); // Adiciona o novo vertice na lista ligada
 	    }
-	    else free(p);// Candidato nao eh vertice
+	    else{
+	       // A posicao do vertice (linha e coluna) nao eh necessariamente uma posicao que esta dentro da componente conexa
+	       troca_valor_componente(i, j, imagem, n_linhas, n_colunas, 13, COR_FUNDO); // Passo 'i' e 'j' para a funcao porque tenho certeza de que nesta posicao o candidato nao eh vertice
+	       free(p);// Candidato nao eh vertice
+	    }
 	 }
       }
+   
+   //imprime_imagem(imagem, n_linhas, n_colunas);
    
    imprime_vertices(lista);
    
