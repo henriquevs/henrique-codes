@@ -152,7 +152,7 @@ Aresta *insere_aresta(Aresta *lista_de_arestas, Aresta *novo){			//FUNCIONA
 }
 
 // Procura um vertice a partir de um indice passado para a funcao
-Vertice *encontra_vertice(Vertice *lista_de_vertices, int indice){
+Vertice *encontra_vertice(Vertice *lista_de_vertices, int indice){		//FUNCIONA
    Vertice *aux=lista_de_vertices;
    if(aux==NULL) return NULL;
    else{
@@ -340,7 +340,7 @@ void imprime_vertices(Vertice *lista){						//FUNCIONA
    }
 }
 
-// Altera os valores dos pixels de um vertice para o valor desejado		//FUNCIONA
+// Troca a cor de uma componente conexa para uma cor desejada		//FUNCIONA
 void troca_cor_componente(int i, int j, unsigned char *imagem ,int n_linhas, int n_colunas, unsigned char cor_atual, unsigned cor_futura){ // 'i' e 'j' indicam a minha posicao na imagem
    int aux = get_pos(n_linhas, n_colunas, i, j);
   
@@ -367,21 +367,21 @@ void troca_cor_componente(int i, int j, unsigned char *imagem ,int n_linhas, int
    }
 }
 
-// Imprime os vertices nos quais as arestas estão ligadas
+// Imprime os vertices nos quais as arestas estão ligadas			//FUNCIONA
 void imprime_informacao(Aresta *lista_de_arestas){
    Aresta *r=lista_de_arestas;
    int contador=1;
    while(r!=NULL){
       if(r->vertice_A!=NULL && r->vertice_B!=NULL)
-      printf("%d %d %d\n", contador, r->vertice_A->num_vertice, r->vertice_B->num_vertice);
+      printf("Aresta%d indiceVertice_A = %d indiceVertice_B = %d\n", contador, r->vertice_A->num_vertice, r->vertice_B->num_vertice);
       contador++;
       r=r->next;
       
    }
 }
 
-// Criacao da matriz de adjacencia
-void matriz_adjacencia(unsigned char **nova_matriz, int numero_vertices){
+// Criacao da matriz de adjacencia						//FUNCIONA
+unsigned char **cria_matriz_adjacencia(unsigned char **nova_matriz, int numero_vertices){
    int i;
    nova_matriz=(unsigned char**)malloc(numero_vertices*sizeof(unsigned char*));
    if(nova_matriz==NULL){ // Verifica alocacao de memoria
@@ -394,30 +394,46 @@ void matriz_adjacencia(unsigned char **nova_matriz, int numero_vertices){
 	 printf("Erro na segunda alocacao dos elementos da matriz\n");
       }
    }
+   return nova_matriz;
 }
 
-// Marca a matriz de adjacencia
-void marca_matriz(unsigned char **matriz, int pos_linha, int pos_coluna, int n_linhas, int n_colunas){
+// Marca a matriz de adjacencia da imagem
+/*unsigned char **marca_matriz(unsigned char **matriz, Aresta *p, int n_linhas, int n_colunas){
    int i, j;
    for(i=0; i<n_linhas; i++)
       for(j=0; j<n_colunas; j++){
-         if(i==pos_linha && j==pos_coluna)
-            (*matriz)[i][j]='1';
-         else if(i==pos_coluna && j==pos_linha)
-            (*matriz)[i][j]=1;
+         if(p->vertice_A!=NULL && p->vertice_B!=NULL){
+            if(i==p->vertice_A->num_vertice && j==p->vertice_B->num_vertice){
+               matriz[i][j]=1;
+
+	    }
+	 }
       }
-   return (*matriz);
+   return matriz;
+}*/
+
+void imprime_matriz(unsigned char **matriz, int n_linhas, int n_colunas){	//FUNCIONA
+   int i, j, var=0;
+   for(i=0; i<n_linhas; i++)
+      for(j=0; j<n_colunas; j++){
+         printf("%u ", matriz[i][j]);
+         var++;
+         if(var%n_colunas == 0){
+            ungetc(' ', stdin);
+            printf("\n");
+         }
+      }
 }
+
 
 int main(){
    char tipo[2];
    char tmp;
-   int n_linhas, n_colunas, val_maximo, i, j, contador;
-   unsigned char *imagem;*matriz_de_adjacencia;
+   int n_linhas, n_colunas, val_maximo, i, j, numero_de_vertices;
+   unsigned char *imagem, **matriz_de_adjacencia=NULL;
    unsigned int aux;
    Vertice *p=NULL, *lista=NULL, *r=NULL; // "lista" é o ponteiro para o inicio da lista ligada simples que contem os vertices como nos
    Aresta *q=NULL, *lista_de_arestas=NULL, *var=NULL;
-   int *matriz_de_adjacencia;
    
    scanf("%c%c", &tipo[0], &tipo[1]);
    
@@ -450,7 +466,7 @@ int main(){
       if(imagem[i] != 0 && imagem[i]!= 128) 
          imagem[i]=COR_FUNDO; // Manipulacao da imagem para eliminar lixo a fim de poder analisar os candidatos a vértices e arestas 
    
-   contador=0;
+   numero_de_vertices=0;
    // Le a imagem e cria uma lista ligada simples com os vertices encontrados
    for(i=0; i<n_linhas; i++)
       for(j=0; j<n_colunas; j++){
@@ -470,7 +486,7 @@ int main(){
 	       p->x=j;
 	       
 	       lista=add_lista_vertices(lista, p); // Adiciona o novo vertice ordenadamente na lista ligada
-	       contador++; // Conta o numero de vertices validos
+	       numero_de_vertices++; // Conta o numero de vertices validos
 	    }
 	    else{
 	       // Se o candidato nao eh vertice alteramos os valores dos seus pixels para a cor de fundo, a fim de eliminar o lixo de memoria
@@ -491,30 +507,39 @@ int main(){
       for(j=0; j<n_colunas; j++){
 	 q=cria_no_aresta(q); // cria o no "aresta"
 	 
-	 encontra_aresta(lista, &q, imagem, n_linhas, n_colunas, i, j, contador);
+	 encontra_aresta(lista, &q, imagem, n_linhas, n_colunas, i, j, numero_de_vertices);
 	 
 	 lista_de_arestas=insere_aresta(lista_de_arestas, q);
       }
    
-   matriz_de_adjacencia=matriz_adjacencia(matriz_de_adjacencia, contador);
+   matriz_de_adjacencia=cria_matriz_adjacencia(matriz_de_adjacencia, numero_de_vertices);
    
    // Inicializa os valores da matriz de adjacencia
-   for(i=0; i<contador; i++)
-      for(j=0; j<contador; contador++)
+   for(i=0; i<numero_de_vertices; i++)
+      for(j=0; j<numero_de_vertices; j++)
 	 matriz_de_adjacencia[i][j]=0;
    
    // Preenche a matriz de adjacencia
-   var=lista_de_arestas;
+   /*var=lista_de_arestas;
    while(var!=NULL){
-      matriz_de_adjacencia=marca_matriz(matriz_de_adjacencia, pos_linha, pos_coluna, n_linhas, n_colunas);
+      for(i=0; i<numero_de_vertices; i++)
+	 for(j=0; j<numero_de_vertices; j++)
+	    if(var->vertice_A!=NULL && var->vertice_B!=NULL && i==var->vertice_A->num_vertice && j==var->vertice_B->num_vertice){
+	       matriz_de_adjacencia[i][j]=1;
+	       matriz_de_adjacencia[j][i]=1;
+	    }
       var=var->next;
-   }
-      
+   }*/
+   
+   imprime_matriz(matriz_de_adjacencia, numero_de_vertices, numero_de_vertices);
+   
+   
+   
    /*printf("P2\n%d %d\n", n_colunas, n_linhas);
    imprime_imagem(imagem , n_linhas, n_colunas);*/
    //imprime_vertices(lista);
 
-   //imprime_informacao(lista_de_arestas);
+   imprime_informacao(lista_de_arestas);
 
    return 0;
 }
