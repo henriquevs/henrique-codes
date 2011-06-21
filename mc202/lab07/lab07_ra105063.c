@@ -66,7 +66,7 @@ int get_pos(int n_linhas, int n_colunas, int i, int j){ // "i" = posicao na linh
       return (i*n_colunas+j);
 }
 
-// Esta funcao "caminha" no possivel vertice, conta sua quantidade de  pixels e os insere numa lista ligada simples //FUNCIONA
+// Caminha no possivel vertice e conta sua quantidade de  pixels		//FUNCIONA
 // Sinalizo o possivel vertice com o valor '13' para poder analisar outros possiveis candidatos a vertices
 void encontra_vertices(Vertice **p, unsigned char *imagem, int n_linhas, int n_colunas, int i, int j){ // "i" = posicao na linha e "j" = posicao na coluna
 
@@ -143,8 +143,8 @@ Aresta *insere_aresta(Aresta *lista_de_arestas, Aresta *novo){			//FUNCIONA
    else{
       while(aux->next!=NULL) aux=aux->next; // Avanca ate o penultimo no da lista de arestas
       if(novo->vertice_A!=NULL && novo->vertice_B!=NULL){
-	 printf("indice verticeA: %d\n", novo->vertice_A->num_vertice);
-	 printf("indice verticeB: %d\n", novo->vertice_B->num_vertice);
+	 printf("Na insercao da aresta na lista ligada: indice verticeA: %d\n", novo->vertice_A->num_vertice);
+	 printf("Na insercao da aresta na lista ligada: indice verticeB: %d\n", novo->vertice_B->num_vertice);
 	 aux->next=novo; // Insere somente as arestas validas
       }
    }
@@ -176,11 +176,11 @@ void encontra_aresta(Vertice *lista_de_vertices, Aresta **q, unsigned char *imag
 	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j)]);
 	 if(tmp!=NULL && (*q)->vertice_A==NULL){
 	    (*q)->vertice_A=tmp;
-	    printf("indice: %d\n", (*q)->vertice_A->num_vertice);
+	    printf("Na resursao da aresta: indice verticeA: %d\n", (*q)->vertice_A->num_vertice);
 	 }
 	 else if(tmp!=NULL && (*q)->vertice_A->num_vertice!=imagem[get_pos(n_linhas, n_colunas, i+1, j)] && (*q)->vertice_B==NULL){
 	    (*q)->vertice_B=tmp;
-	    printf("indice: %d\n", (*q)->vertice_B->num_vertice);
+	    printf("Na resursao da aresta: indice verticeB: %d\n", (*q)->vertice_B->num_vertice);
 	 }
       }
       
@@ -188,11 +188,11 @@ void encontra_aresta(Vertice *lista_de_vertices, Aresta **q, unsigned char *imag
 	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j)]);
 	 if(tmp!=NULL && (*q)->vertice_A==NULL){
 	    (*q)->vertice_A=tmp;
-	    printf("indice: %d\n", (*q)->vertice_A->num_vertice);
+	    printf("Na resursao da aresta: indice verticeA: %d\n", (*q)->vertice_A->num_vertice);
 	 }
 	 else if(tmp!=NULL && (*q)->vertice_A->num_vertice!=imagem[get_pos(n_linhas, n_colunas, i-1, j)] && (*q)->vertice_B==NULL){
 	    (*q)->vertice_B=tmp;
-	    printf("indice: %d\n", (*q)->vertice_B->num_vertice);
+	    printf("Na resursao da aresta: indice verticeB: %d\n", (*q)->vertice_B->num_vertice);
 	 }
       }
       
@@ -200,11 +200,11 @@ void encontra_aresta(Vertice *lista_de_vertices, Aresta **q, unsigned char *imag
 	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i, j+1)]);
 	 if(tmp!=NULL && (*q)->vertice_A==NULL){
 	    (*q)->vertice_A=tmp;
-	    printf("indice: %d\n", (*q)->vertice_A->num_vertice);
+	    printf("Na resursao da aresta: indice verticeA: %d\n", (*q)->vertice_A->num_vertice);
 	 }
 	 else if(tmp!=NULL && (*q)->vertice_A->num_vertice!=imagem[get_pos(n_linhas, n_colunas, i, j+1)] && (*q)->vertice_B==NULL){
 	    (*q)->vertice_B=tmp;
-	    printf("indice: %d\n", (*q)->vertice_B->num_vertice);
+	    printf("Na resursao da aresta: indice verticeB: %d\n", (*q)->vertice_B->num_vertice);
 	 }
       }
       
@@ -212,11 +212,11 @@ void encontra_aresta(Vertice *lista_de_vertices, Aresta **q, unsigned char *imag
 	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i, j-1)]);
 	 if(tmp!=NULL && (*q)->vertice_A==NULL){
 	    (*q)->vertice_A=tmp;
-	    printf("indice: %d\n", (*q)->vertice_A->num_vertice);
+	    printf("Na resursao da aresta: indice verticeA: %d\n", (*q)->vertice_A->num_vertice);
 	 }
 	 else if(tmp!=NULL && (*q)->vertice_A->num_vertice!=imagem[get_pos(n_linhas, n_colunas, i, j-1)] && (*q)->vertice_B==NULL){
 	    (*q)->vertice_B=tmp;
-	    printf("indice: %d\n", (*q)->vertice_B->num_vertice);
+	    printf("Na resursao da aresta: indice verticeB: %d\n", (*q)->vertice_B->num_vertice);
 	 }
       }
       
@@ -224,11 +224,11 @@ void encontra_aresta(Vertice *lista_de_vertices, Aresta **q, unsigned char *imag
 	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j+1)]);
 	 if(tmp!=NULL && (*q)->vertice_A==NULL){
 	    (*q)->vertice_A=tmp;
-	    printf("indice: %d\n", (*q)->vertice_A->num_vertice);
+	    printf("Na resursao da aresta: indice verticeA: %d\n", (*q)->vertice_A->num_vertice);
 	 }
 	 else if(tmp!=NULL && (*q)->vertice_A->num_vertice!=imagem[get_pos(n_linhas, n_colunas, i+1, j+1)] && (*q)->vertice_B==NULL){
 	    (*q)->vertice_B=tmp;
-	    printf("indice: %d\n", (*q)->vertice_B->num_vertice);
+	    printf("Na resursao da aresta: indice verticeB: %d\n", (*q)->vertice_B->num_vertice);
 	 }
       }
       
@@ -237,11 +237,11 @@ void encontra_aresta(Vertice *lista_de_vertices, Aresta **q, unsigned char *imag
 	 if(tmp!=NULL && (*q)->vertice_A==NULL){
 	    
 	    (*q)->vertice_A=tmp;
-	    printf("indice: %d\n", (*q)->vertice_A->num_vertice);
+	    printf("Na resursao da aresta: indice verticeA: %d\n", (*q)->vertice_A->num_vertice);
 	 }
 	 else if(tmp!=NULL && (*q)->vertice_A->num_vertice!=imagem[get_pos(n_linhas, n_colunas, i+1, j-1)] && (*q)->vertice_B==NULL){
 	    (*q)->vertice_B=tmp;
-	    printf("indice: %d\n", (*q)->vertice_B->num_vertice);
+	    printf("Na resursao da aresta: indice verticeB: %d\n", (*q)->vertice_B->num_vertice);
 	 }
       }
       
@@ -249,11 +249,11 @@ void encontra_aresta(Vertice *lista_de_vertices, Aresta **q, unsigned char *imag
 	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j+1)]);
 	 if(tmp!=NULL && (*q)->vertice_A==NULL){
 	    (*q)->vertice_A=tmp;
-	    printf("indice: %d\n", (*q)->vertice_A->num_vertice);
+	    printf("Na resursao da aresta: indice verticeA: %d\n", (*q)->vertice_A->num_vertice);
 	 }
 	 else if(tmp!=NULL && (*q)->vertice_A->num_vertice!=imagem[get_pos(n_linhas, n_colunas, i-1, j+1)] && (*q)->vertice_B==NULL){
 	    (*q)->vertice_B=tmp;
-	    printf("indice: %d\n", (*q)->vertice_B->num_vertice);
+	    printf("Na resursao da aresta: indice verticeB: %d\n", (*q)->vertice_B->num_vertice);
 	 }
       }
       
@@ -261,11 +261,11 @@ void encontra_aresta(Vertice *lista_de_vertices, Aresta **q, unsigned char *imag
 	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j-1)]);
 	 if(tmp!=NULL && (*q)->vertice_A==NULL){
 	    (*q)->vertice_A=tmp;
-	    printf("indice: %d\n", (*q)->vertice_A->num_vertice);
+	    printf("Na resursao da aresta: indice verticeA: %d\n", (*q)->vertice_A->num_vertice);
 	 }
 	 else if(tmp!=NULL && (*q)->vertice_A->num_vertice!=imagem[get_pos(n_linhas, n_colunas, i-1, j-1)] && (*q)->vertice_B==NULL){
 	    (*q)->vertice_B=tmp;
-	    printf("indice: %d\n", (*q)->vertice_B->num_vertice);
+	    printf("Na resursao da aresta: indice verticeB: %d\n", (*q)->vertice_B->num_vertice);
 	 }
       }
       
@@ -503,9 +503,9 @@ int main(){
       }
    
    // Le a imagem e cria uma lista ligada simples com as arestas encontradas
+   q=cria_no_aresta(q); // cria o no "aresta"
    for(i=0; i<n_linhas; i++)
       for(j=0; j<n_colunas; j++){
-	 q=cria_no_aresta(q); // cria o no "aresta"
 	 
 	 encontra_aresta(lista, &q, imagem, n_linhas, n_colunas, i, j, numero_de_vertices);
 	 
