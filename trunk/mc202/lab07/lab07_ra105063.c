@@ -153,121 +153,146 @@ void troca_cor_componente(int i, int j, unsigned char *imagem ,int n_linhas, int
 // Encontra aresta e guarda a informacao de quais vertices ela esta ligada
 void encontra_aresta(Vertice *lista_de_vertices, unsigned char *vertice_A, unsigned char *vertice_B, unsigned char *imagem, int n_linhas, int n_colunas, int i, int j, int numero_de_vertices){ // "i" = posicao na linha e "j" = posicao na coluna
    int aux=get_pos(n_linhas, n_colunas, i, j);
-   Vertice *tmp;
+   Vertice *tmp1, *tmp2;
    
    if(aux!=-1 && imagem[aux]==128){
       
       imagem[aux]=COR_FUNDO;
       
       if(imagem[get_pos(n_linhas, n_colunas, i+1, j)]<=numero_de_vertices){ // Verifica se ha vertice abaixo
-	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j)]);
-	 if(tmp!=NULL && (*vertice_A)==0){
+	 tmp1=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j)]);
+	 if(tmp1!=NULL && (*vertice_A)==0){
 	    (*vertice_A)=imagem[get_pos(n_linhas, n_colunas, i+1, j)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i+1, j)], COR_FUNDO);
 	    printf("vertice_A: %d\n", (*vertice_A));
 	 }
-	 else if(tmp!=NULL && (*vertice_A)!=0 && (*vertice_B)==0){
+	 else{
+	    tmp2=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j)]);
+	    if(tmp2->num_vertice!=tmp1->num_vertice && (*vertice_A)!=0 && (*vertice_B)==0){
 	    (*vertice_B)=imagem[get_pos(n_linhas, n_colunas, i+1, j)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i+1, j)], COR_FUNDO);
 	    printf("vertice_B: %d\n", (*vertice_B));
+	    }
 	 }
       }
       
       if(imagem[get_pos(n_linhas, n_colunas, i-1, j)]<=numero_de_vertices){ // Verifica se ha vertice acima
-	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j)]);
-	 if(tmp!=NULL && (*vertice_A)==0){
+	 tmp1=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j)]);
+	 if(tmp1!=NULL && (*vertice_A)==0){
 	    (*vertice_A)=imagem[get_pos(n_linhas, n_colunas, i-1, j)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i-1, j)], COR_FUNDO);
 	    printf("vertice_A: %d\n", (*vertice_A));
 	 }
-	 else if(tmp!=NULL && (*vertice_A)!=0 && (*vertice_B)==0){
+	 else{
+	    tmp2=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j)]);
+	    if(tmp2->num_vertice!=tmp1->num_vertice && (*vertice_A)!=0 && (*vertice_B)==0){
 	    (*vertice_B)=imagem[get_pos(n_linhas, n_colunas, i-1, j)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i-1, j)], COR_FUNDO);
 	    printf("vertice_B: %d\n", (*vertice_B));
+	    }
 	 }
       }
       
       if(imagem[get_pos(n_linhas, n_colunas, i, j+1)]<=numero_de_vertices){ // Verifica se ha vertice a direita
-	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i, j+1)]);
-	 if(tmp!=NULL && (*vertice_A)==0){
+	 tmp1=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i, j+1)]);
+	 if(tmp1!=NULL && (*vertice_A)==0){
 	    (*vertice_A)=imagem[get_pos(n_linhas, n_colunas, i, j+1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i, j+1)], COR_FUNDO);
 	    printf("vertice_A: %d\n", (*vertice_A));
 	 }
-	 else if(tmp!=NULL && (*vertice_A)!=0 && (*vertice_B)==0){
+	 else{
+	    tmp2=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i, j+1)]);
+	    if(tmp2->num_vertice!=tmp1->num_vertice && (*vertice_A)!=0 && (*vertice_B)==0){
 	    (*vertice_B)=imagem[get_pos(n_linhas, n_colunas, i, j+1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i, j+1)], COR_FUNDO);
 	    printf("vertice_B: %d\n", (*vertice_B));
+	    }
 	 }
       }
       
       if(imagem[get_pos(n_linhas, n_colunas, i, j-1)]<=numero_de_vertices){ // Verifica se ha vertice a esquerda
-	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i, j-1)]);
-	 if(tmp!=NULL && (*vertice_A)==0){
+	 tmp1=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i, j-1)]);
+	 if(tmp1!=NULL && (*vertice_A)==0){
 	    (*vertice_A)=imagem[get_pos(n_linhas, n_colunas, i, j-1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i, j-1)], COR_FUNDO);
 	    printf("vertice_A: %d\n", (*vertice_A));
 	 }
-	 else if(tmp!=NULL && (*vertice_A)!=0 && (*vertice_B)==0){
+	 else{
+	    tmp2=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i, j-1)]);
+	    if(tmp2->num_vertice!=tmp1->num_vertice && (*vertice_A)!=0 && (*vertice_B)==0){
 	    (*vertice_B)=imagem[get_pos(n_linhas, n_colunas, i, j-1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i, j-1)], COR_FUNDO);
 	    printf("vertice_B: %d\n", (*vertice_B));
+	    }
 	 }
       }
       
       if(imagem[get_pos(n_linhas, n_colunas, i+1, j+1)]<=numero_de_vertices){ // Verifica se ha vertice abaixo e esquerda
-	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j+1)]);
-	 if(tmp!=NULL && (*vertice_A)==0){
+	 tmp1=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j+1)]);
+	 if(tmp1!=NULL && (*vertice_A)==0){
 	    (*vertice_A)=imagem[get_pos(n_linhas, n_colunas, i+1, j+1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i+1, j+1)], COR_FUNDO);
 	    printf("vertice_A: %d\n", (*vertice_A));
 	 }
-	 else if(tmp!=NULL && (*vertice_A)!=0 && (*vertice_B)==0){
+	 else{
+	    tmp2=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j+1)]);
+	    if(tmp2->num_vertice!=tmp1->num_vertice && (*vertice_A)!=0 && (*vertice_B)==0){
 	    (*vertice_B)=imagem[get_pos(n_linhas, n_colunas, i+1, j+1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i+1, j+1)], COR_FUNDO);
 	    printf("vertice_B: %d\n", (*vertice_B));
+	    }
 	 }
       }
       
       if(imagem[get_pos(n_linhas, n_colunas, i+1, j-1)]<=numero_de_vertices){ // Verifica se ha vertice abaixo e direita
-	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j-1)]);
-	 if(tmp!=NULL && (*vertice_A)==0){
+	 tmp1=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j-1)]);
+	 if(tmp1!=NULL && (*vertice_A)==0){
 	    (*vertice_A)=imagem[get_pos(n_linhas, n_colunas, i+1, j-1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i+1, j-1)], COR_FUNDO);
 	    printf("vertice_A: %d\n", (*vertice_A));
 	 }
-	 else if(tmp!=NULL && (*vertice_A)!=0 && (*vertice_B)==0){
+	 else{
+	    tmp2=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i+1, j-1)]);
+	    if(tmp2->num_vertice!=tmp1->num_vertice && (*vertice_A)!=0 && (*vertice_B)==0){
 	    (*vertice_B)=imagem[get_pos(n_linhas, n_colunas, i+1, j-1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i+1, j-1)], COR_FUNDO);
 	    printf("vertice_B: %d\n", (*vertice_B));
+	    }
 	 }
       }
       
       if(imagem[get_pos(n_linhas, n_colunas, i-1, j+1)]<=numero_de_vertices){ // Verifica se ha vertice acima e direita
-	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j+1)]);
-	 if(tmp!=NULL && (*vertice_A)==0){
+	 tmp1=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j+1)]);
+	 if(tmp1!=NULL && (*vertice_A)==0){
 	    (*vertice_A)=imagem[get_pos(n_linhas, n_colunas, i-1, j+1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i-1, j+1)], COR_FUNDO);
 	    printf("vertice_A: %d\n", (*vertice_A));
 	 }
-	 else if(tmp!=NULL && (*vertice_A)!=0 && (*vertice_B)==0){
+	 else{
+	    tmp2=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j+1)]);
+	    if(tmp2->num_vertice!=tmp1->num_vertice && (*vertice_A)!=0 && (*vertice_B)==0){
 	    (*vertice_B)=imagem[get_pos(n_linhas, n_colunas, i-1, j+1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i-1, j+1)], COR_FUNDO);
 	    printf("vertice_B: %d\n", (*vertice_B));
+	    }
 	 }
       }
       
       if(imagem[get_pos(n_linhas, n_colunas, i-1, j-1)]<=numero_de_vertices){ // Verifica se ha vertice acima e esquerda
-	 tmp=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j-1)]);
-	 if(tmp!=NULL && (*vertice_A)==0){
+	 tmp1=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j-1)]);
+	 if(tmp1!=NULL && (*vertice_A)==0){
 	    (*vertice_A)=imagem[get_pos(n_linhas, n_colunas, i-1, j-1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i-1, j-1)], COR_FUNDO);
 	    printf("vertice_A: %d\n", (*vertice_A));
 	 }
-	 else if(tmp!=NULL && (*vertice_A)!=0 && (*vertice_B)==0){
+	 else{
+	    tmp2=encontra_vertice(lista_de_vertices, imagem[get_pos(n_linhas, n_colunas, i-1, j+1)]);
+	    printf("Valor do tmp2 %d\n", tmp2->num_vertice);
+	    if(tmp2->num_vertice!=tmp1->num_vertice && (*vertice_A)!=0 && (*vertice_B)==0){
 	    (*vertice_B)=imagem[get_pos(n_linhas, n_colunas, i-1, j-1)];
 	    //troca_cor_componente(i, j, imagem, n_linhas, n_colunas, imagem[get_pos(n_linhas, n_colunas, i-1, j-1)], COR_FUNDO);
 	    printf("vertice_B: %d\n", (*vertice_B));
+	    }
 	 }
       }
       
