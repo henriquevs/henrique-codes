@@ -18,7 +18,8 @@ y1:	.ds 4
 x2:	.ds 4
 y2:	.ds 4
 
-	.org 10h		; o programa processa um ponto de cada vez
+	.org 10h		; seta o endereco para a posição 10h da memoria
+				; o programa processa um ponto de cada vez
 xdado1:	.ds 4
 ydado1:	.ds 4
 xdado2:	.ds 4
@@ -28,66 +29,74 @@ ydado2:	.ds 4
 res1:	.ds 4			; guarda a resposta 1 na posicao 20h da memoria (4 bytes são reservados)
 res2:	.ds 4			; guarda a resposta 2 na posicao 24h da memoria (4 bytes são reservados)
 
+				; definicao de constantes
 POSICAO_INICIAL .equ 100h	; definicao da posicao onde o programa comeca a ser executado
-RESP_POSITIVA	.equ 01h	; valor da resposta eh posivida "1"
-RESP_NEGATIVA	.equ -1		; valor da resposta eh negativa "-1"
+RESP_POSITIVA	.equ 01h	; ponto testado eh valido -> valor da resposta eh positivo "1"
+RESP_NEGATIVA	.equ -1		; ponto testado não eh valido -> valor da resposta eh negativo "-1"
 
 ; Logica do programa
 main:
 	.org POSICAO_INICIAL	; o programa inicia sua execucao a partir da posicao 100h da memoria
 				; carregamos os valores da memoria nos registradores
 verifica1:
+				; carrega registradores
 	ld r0, x1
 	ld r1, x2
 	ld r2, xdado1
 
 	cmp r2, r0		; se a diferenca for maior ou igual a zero, o "xdado" esta a direita de "x1"
-	js erro_verifica1	; antes de entrar na segunda verificacao, grava a resposta de falha da primeira analise
+	js erro_verifica1	; antes de entrar na segunda verificacao, grava a resposta de falha da primeira analise (caso ela ocorra) [*]
 	cmp r1, r2		; se a diferenca for maior ou igual a zero, o "xdado" esta a esquerda de "x2"
-	js erro_verifica1	; antes de entrar na segunda verificacao, grava a resposta de falha da primeira analise
+	js erro_verifica1	; analogo ao [*]
 
+				; note que o programa utiliza os mesmos registradores da analise anterior (otimizando o processo)
 	ld r0, y1		; sabendo que o "x" eh valido, verificamos o "y"
 	ld r1, y2
 	ld r2, ydado1
 
 	cmp r0, r2		; se a diferenca for maior ou igual a zero, o "ydado" esta abaixo de "y1"
-	js erro_verifica1
+	js erro_verifica1	; analogo ao [*]
 	cmp r2, r1		; se a diferenca for maior ou igual a zero, o "ydado" esta acima de "y2"
-	js erro_verifica1
+	js erro_verifica1	; analogo ao [*]
 
 	set r2, RESP_POSITIVA	; carrega resposta no registrador 2 (reutilizando o registrador)
 	st res1, r2		; o primeiro ponto está dentro do retangulo
-	jmp verifica2
+	jmp verifica2		; se o processo nao teve erro, processamos o
 
 erro_verifica1:			; grava a informacao de que o primeiro ponto esta fora do retangulo
-	set r2, RESP_NEGATIVA	;carrega resposta no registrador 2 (reutilizando o registrador)
+	set r2, RESP_NEGATIVA	; carrega resposta de erro no registrador 2 (reutilizando o registrador)
 	st res1, r2
 
-verifica2:
+verifica2:			; inicia a segunda verificacao
+				; carrega registradores para verificar "x"
 	ld r0, x1
 	ld r1, x2
 	ld r2, xdado2
 
-	cmp r2, r0
-	js erro_verifica2
+				; analise de comparacao semelhante semelhante ao da primeira verificacao para "x"
+	cmp r2, r0		
+	js erro_verifica2	; analogo ao [*]
 	cmp r1, r2
-	js erro_verifica2
+	js erro_verifica2	; analogo ao [*]
 
+				; note que o programa utiliza os mesmos registradores da analise anterior (otimizando o processo)
+				; carrega registradores para verificar "y"
 	ld r0, y1
 	ld r1, y2
 	ld r2, ydado2
 
+				; analise de comparacao semelhante semelhante ao da primeira verificacao para "y"
 	cmp r0, r2
-	js erro_verifica2
+	js erro_verifica2	; analogo ao [*]
 	cmp r2, r1
-	js erro_verifica2
+	js erro_verifica2	; analogo ao [*]
 
 	set r2, RESP_POSITIVA	; carrega resposta no registrador 2 (reutilizando o registrador)	
 	st res2, r2
-	jmp final
+	jmp final		; termina o programa
 
 erro_verifica2:
-	set r2, RESP_NEGATIVA ; carrega resposta no registrador 2 (reutilizando o registrador)
+	set r2, RESP_NEGATIVA ; carrega resposta de erro no registrador 2 (reutilizando o registrador)
 	st res2, r2
 
 final:
