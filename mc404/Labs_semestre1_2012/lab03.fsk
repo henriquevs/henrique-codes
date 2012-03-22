@@ -1,0 +1,94 @@
+;**********************************************************************;
+;*           UNICAMP - Universidade Estadual de Campinas              *;
+;*                Engenharia de Controle e Automação                  *;
+;* MC404 - Organização Basica de Computadores e Linguagem de Montagem *;
+;*                Professor: Ricardo de Oliveira Anido                *;
+;*       Turma: E - Aluno: Henrique Vicente Souza - RA:105063         *;
+;*                                                                    *;
+;* Este programa tem por finalidade verificar, dadas as coordenadas   *;
+;* de um retângulo e de um conjunto de pontos, se um dos pontos dados *;
+;* está dentro ou fora do retangulo                                   *;
+;**********************************************************************;
+
+; Dados especificos do programa
+	.org 00h		; seta o endereço para a posicao 00h da memoria
+				; carrega as posicoes da memoria para as coordenadas dadas
+x1:	.ds 4
+y1:	.ds 4
+x2:	.ds 4
+y2:	.ds 4
+
+	.org 10h		; o programa processa um ponto de cada vez
+xdado1:	.ds 4
+ydado1:	.ds 4
+xdado2:	.ds 4
+ydado2:	.ds 4
+
+	.org 20h		; seta endereco na posicao 20h da memoria
+res1:	.ds 4			; guarda a resposta 1 na posicao 20h da memoria (4 bytes são reservados)
+res2:	.ds 4			; guarda a resposta 2 na posicao 24h da memoria (4 bytes são reservados)
+
+POSICAO_INICIAL .equ 100h	; definicao da posicao onde o programa comeca a ser executado
+RESP_POSITIVA	.equ 01h	; valor da resposta eh posivida "1"
+RESP_NEGATIVA	.equ -1		; valor da resposta eh negativa "-1"
+
+; Logica do programa
+main:
+	.org POSICAO_INICIAL	; o programa inicia sua execucao a partir da posicao 100h da memoria
+				; carregamos os valores da memoria nos registradores
+verifica1:
+	ld r0, x1
+	ld r1, x2
+	ld r2, xdado1
+
+	cmp r2, r0		; se a diferenca for maior ou igual a zero, o "xdado" esta a direita de "x1"
+	js erro_verifica1	; antes de entrar na segunda verificacao, grava a resposta de falha da primeira analise
+	cmp r1, r2		; se a diferenca for maior ou igual a zero, o "xdado" esta a esquerda de "x2"
+	js erro_verifica1	; antes de entrar na segunda verificacao, grava a resposta de falha da primeira analise
+
+	ld r0, y1		; sabendo que o "x" eh valido, verificamos o "y"
+	ld r1, y2
+	ld r2, ydado1
+
+	cmp r0, r2		; se a diferenca for maior ou igual a zero, o "ydado" esta abaixo de "y1"
+	js erro_verifica1
+	cmp r2, r1		; se a diferenca for maior ou igual a zero, o "ydado" esta acima de "y2"
+	js erro_verifica1
+
+	set r2, RESP_POSITIVA	; carrega resposta no registrador 2 (reutilizando o registrador)
+	st res1, r2		; o primeiro ponto está dentro do retangulo
+	jmp verifica2
+
+erro_verifica1:			; grava a informacao de que o primeiro ponto esta fora do retangulo
+	set r2, RESP_NEGATIVA	;carrega resposta no registrador 2 (reutilizando o registrador)
+	st res1, r2
+
+verifica2:
+	ld r0, x1
+	ld r1, x2
+	ld r2, xdado2
+
+	cmp r2, r0
+	js erro_verifica2
+	cmp r1, r2
+	js erro_verifica2
+
+	ld r0, y1
+	ld r1, y2
+	ld r2, ydado2
+
+	cmp r0, r2
+	js erro_verifica2
+	cmp r2, r1
+	js erro_verifica2
+
+	set r2, RESP_POSITIVA	; carrega resposta no registrador 2 (reutilizando o registrador)	
+	st res2, r2
+	jmp final
+
+erro_verifica2:
+	set r2, RESP_NEGATIVA ; carrega resposta no registrador 2 (reutilizando o registrador)
+	st res2, r2
+
+final:
+	hlt
