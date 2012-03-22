@@ -61,7 +61,7 @@ verifica1:
 
 	set r2, RESP_POSITIVA	; carrega resposta no registrador 2 (reutilizando o registrador)
 	st res1, r2		; o primeiro ponto está dentro do retangulo
-	jmp verifica2		; se o processo nao teve erro, processamos o
+	jmp verifica2		; se o processo nao teve erro, processamos o segundo ponto
 
 erro_verifica1:			; grava a informacao de que o primeiro ponto esta fora do retangulo
 	set r2, RESP_NEGATIVA	; carrega resposta de erro no registrador 2 (reutilizando o registrador)
@@ -96,7 +96,7 @@ verifica2:			; inicia a segunda verificacao
 	jmp final		; termina o programa
 
 erro_verifica2:
-	set r2, RESP_NEGATIVA ; carrega resposta de erro no registrador 2 (reutilizando o registrador)
+	set r2, RESP_NEGATIVA	; carrega resposta de erro no registrador 2 (reutilizando o registrador)
 	st res2, r2
 
 final:
