@@ -1,0 +1,30 @@
+QUEBRA	.equ 0Ah
+BRANCO	.equ 20h
+
+transforma:
+	; descricao:	formata um texto para o formato ISO-8859-1
+	; entrada: 	r1 -> numero maximo de colunas
+	;		r2 -> apontador para o inicio da memoria que contem o texto original
+	;		r3 -> apontador para o inicio da memoria que contem o texto final
+	; saida:	r3 -> texto formatado
+	; destroi:	nada
+
+	set r0, 1	; contador
+
+loop:
+	cmp r0, r1
+
+	mov r4, r2	; r4 "caminha" no texto original
+	mov r5, r3	; r5 "caminha" no texto de saida
+	ld r6, (r4)	; r6 tem o valor do conteudo de r4 atual
+
+	cmp r6, QUEBRA
+	jz substitui
+	cmp r6, BRANCO
+	jz guardaem_r5	; r5 tem o ultimo espaco em branco encontrado
+	
+	st (r5), r6	; guarda o caractere no texto de saida
+
+continua1:
+	ld r5, (r4)	; guarda o "branco" imediatamente anterior a palavra analisada
+
