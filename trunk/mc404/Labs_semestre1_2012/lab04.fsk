@@ -1,0 +1,70 @@
+;**********************************************************************************
+; Reserva memoria para os dados a serem lidos
+;**********************************************************************************
+	.org 0000h
+N:	.ds 4		; N > 1
+RESULT	.equ 4
+
+;**********************************************************************************
+; Inicio do programa
+;**********************************************************************************
+
+main:
+	.org 400h		; Comeca a execucao nessa posicao de memoria
+	
+	set r0,1		; contador "r0"
+	set r1,08h		; posicao inicial do vetor de valores a serem testados
+	set r2,0		; Nao achou maior valor ainda
+	ld r3,(r1)		; "r3" guardara a resposta do primeiro maior valor
+	add r1,4		; avanca para a segunda posicao do vetor
+	st RESULT,r3		; o primeiro valor é o maior no comeco da analise
+
+encontraMaior:
+	
+	cmp r0,N		; verifica se chegou no final do vetor
+	jge setFlag		; Pule se maior ou igual
+
+	ld r4,(r1)		; pega o proximo valor
+	cmp r4,r3
+	jg guardaResultado
+	jmp andaNoLoop		; avanca no vetor se "r4" "r3"
+
+segundoMaior:
+	
+	set r1,08h		; posicao inicial do vetor de valores a serem testados
+	set r2,0		; Nao achou maior valor ainda
+	ld r3,(r1)		; "r3" guardara a resposta do primeiro maior valor
+	add r1,4		; avanca para a segunda posicao do vetor
+
+	cmp r0,N		; verifica se chegou no final do vetor
+	jge setFlag		; Pule se maior ou igual
+
+	ld r4,(r1)		; pega o proximo valor
+	cmp r4,RESULT
+	jg guardaResultado
+	jmp andaNoLoop		; avanca no vetor se "r4" "r3"
+
+
+andaNoLoop:
+
+	add r1,4		; Anda 4 bytes no endereco de memoria do vetor
+	add r0,1		; Adiciona 1 no contador
+	mov r3,r4		; O valor mais velho fica sendo o mais novo
+	jmp encontraMaior	; Volta para o loop de verificacao
+
+guardaResultado:
+
+	st RESULT,r4
+	jmp andaNoLoop
+
+setFlag:
+	
+	cmp r2,1
+	jmp sair		; Jah leu o maior e o segundo maior, entao sai do programa
+	
+	set r0,0		; Zera o contador
+	set r2,1
+	jmp segundoMaior	; Volta para o loop para encontrar o segundo maior
+	
+sair:
+	sys 20h
