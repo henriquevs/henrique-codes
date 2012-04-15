@@ -1,0 +1,152 @@
+;Aluno1:095725:Francine Domingos de Paula
+;Aluno2:105063:Henrique Vicente Souza
+
+;**********************************************************************************
+; Instituto de Computacao da UNICAMP
+; Disciplina MC404E: Primeiro Semestre de 2012
+; Laboratorio 05: Formatacao de Texto
+; Autores: Francine Domingos de Paula RA:095725
+;          Henrique Vicente Souza     RA:105063		
+;**********************************************************************************
+
+;**********************************************************************************
+; Objetivo: Desenvolver um programa que, dado um texto de entrada, 
+; formate a saida com N colunas desejadas
+;**********************************************************************************
+
+;**********************************************************************************
+; Definicao de constantes
+;**********************************************************************************
+
+QUEBRA 	.equ 0Ah
+ESPACO 	.equ 20h
+FIM 	.equ 00h
+
+;**********************************************************************************
+; INICIALIZACAO DO PROGRAMA
+; ESSE TRECHO DEVE SER APAGADO ANTES DE ENTREGAR!
+
+; REGISTRADORES SAO CARREGADOS DIRETAMENTE NO PROMPT
+.org 500h
+
+;**********************************************************************************
+
+;**********************************************************************************
+; Inicio do procedimento
+;**********************************************************************************
+
+formata:
+	; Descricao: formata um texto para o formato ISO-8859-1
+	; Entrada: r1 -> numero maximo de colunas
+	; r2 -> apontador para o inicio da memoria que contem o texto original
+	; r3 -> apontador para o inicio da memoria que contem o texto final
+	; Saida: r3 -> texto formatado
+	; Destroi: nada
+
+
+; Empilha registradores
+
+	push r1
+	push r2
+	push r3
+
+	set r0, 1		; Contador de colunas
+	mov r4, r3		; r4 eh apontador para ultimo espaco em branco na leitura
+	mov r8, r2		; r8 eh apontador para ultimo espaco em branco na saida
+				; no texto de saida
+	set r5, QUEBRA
+	set r6, ESPACO
+	set r7, FIM
+	
+
+main:
+
+	ldb r9, (r2)		; Le caracter de entrada
+	cmp r9, r7		; Verifica se eh fim de arquivo
+	jz sair			; Se for, sai
+	jmp verificaFimColuna	; Se nao chegou, verifica se eh fim de coluna	
+
+
+sair:
+	st (r3), r7		; Escreve \0 na memoria
+	pop r3
+	pop r2
+	pop r1
+	ret	
+	
+verificaFimColuna:
+
+	cmp r0, r1		; Contador eh igual ao numero de colunas?
+	jz processaProximaLinha	; Se sim, trata o caso de fim de linha
+	jmp processaCaracter	; Se nao, continua processando a mesma linha
+
+	
+processaProximaLinha:
+
+	ldb r10, (r2+1)		; Pega o proximo caracter de entrada
+	cmp r10, r6		; Verifica se eh espaco em branco
+	jz copiaQuebraSaida	; Se for, copia um \n na saida
+	cmp r2, r5		; Se nao for espaco, verifica se eh \n
+	jz copiaQuebraSaida	; Se for, apenas copia \n na saida
+	jmp voltaUltimoEspaco	; Nao eh espaco ou \n, ou seja,
+				; estah tentando quebrar uma palavra no meio
+				; Pula entao para o rotulo que trata esse caso
+
+voltaUltimoEspaco:
+
+	mov r2, r4		; Faz o ponteiro de leitura apontar pro ultimo
+				; espaco em branco lido	
+	mov r3, r8		; Faz o ponteiro de escrita apontar pro ultimo
+				; espaco em branco escrito
+	st (r4), r5		; Escreve \n na saida
+	jmp reiniciaContador
+
+
+copiaQuebraSaida:
+
+	st (r3), r5		; Copia \n na saida
+	jmp reiniciaContador	; Volta para um inicio de linha
+
+
+reiniciaContador:
+
+	set r0, 1
+	jmp avancaMemoria	; Anda 1 byte na memoria
+
+
+avancaMemoria:
+
+	add r2, 1		; Anda 1 byte na entrada
+	add r3, 1		; Anda 1 byte na saida
+	jmp main		; Volta para o loop
+
+
+processaCaracter:
+
+	cmp r9, r6		; Verifica se eh caracter em branco
+	jz escreveEspacoSaida	; Se for, escreve um espaco na saida
+	cmp r9, r5		; Verifica se a leitura eh um \n
+	jz escreveEspacoSaida	; Se for, escreve um espaco na saida tambem
+	jmp escreveLetraSaida	; Se nao for espaco ou \n eh letra
+
+
+escreveEspacoSaida:
+
+	st (r3), r6		; Escreve espaco na memoria
+	mov r4, r6		; Guarda ponteiros para ultimo espaco
+	mov r8, r6
+	jmp incrementaContador	; Anda na entrada e saida
+
+
+escreveLetraSaida:
+
+	st (r3), r9		; Escreve uma letra na saida
+	jmp incrementaContador	; Anda na memoria
+
+
+incrementaContador:
+
+	add r0, 1
+	jmp avancaMemoria
+
+	
