@@ -46,13 +46,13 @@ formata:
 
 ; Empilha registradores
 
-	push r1
-	push r2
-	push r3
+	;push r1
+	;push r2
+	;push r3
 
 	set r0, 1		; Contador de colunas
-	mov r4, r3		; r4 eh apontador para ultimo espaco em branco na leitura
-	mov r8, r2		; r8 eh apontador para ultimo espaco em branco na saida
+	set r4, -1		; r4 eh apontador para ultimo espaco em branco na leitura
+	set r8, -1		; r8 eh apontador para ultimo espaco em branco na saida
 				; no texto de saida
 	set r5, QUEBRA
 	set r6, ESPACO
@@ -68,42 +68,79 @@ main:
 
 
 sair:
+
 	st (r3), r7		; Escreve \0 na memoria
-	pop r3
-	pop r2
-	pop r1
-	ret	
+	;pop r3
+	;pop r2
+	;pop r1
+	;ret
+	sys 20h	
 	
 verificaFimColuna:
 
 	cmp r0, r1		; Contador eh igual ao numero de colunas?
+	
 	jz processaProximaLinha	; Se sim, trata o caso de fim de linha
 	jmp processaCaracter	; Se nao, continua processando a mesma linha
 
 	
 processaProximaLinha:
+	
 
 	ldb r10, (r2+1)		; Pega o proximo caracter de entrada
 	cmp r10, r6		; Verifica se eh espaco em branco
-	jz copiaQuebraSaida	; Se for, copia um \n na saida
-	cmp r2, r5		; Se nao for espaco, verifica se eh \n
-	jz copiaQuebraSaida	; Se for, apenas copia \n na saida
-	jmp voltaUltimoEspaco	; Nao eh espaco ou \n, ou seja,
+	jz copiaQuebraFinal	; Se for, copia um \n na saida
+	cmp r10, r5		; Se nao for espaco, verifica se eh \n
+	jz copiaQuebraFinal	; Se for, apenas copia \n na saida
+	cmp r10, r7		; Eh o fim
+	jz escreveFinal
+	jmp voltaUltimoEspaco	; Nao eh espaco ou \n ou fim, ou seja,
 				; estah tentando quebrar uma palavra no meio
 				; Pula entao para o rotulo que trata esse caso
 
+escreveFinal:			
+	
+	cmp r9, r5		; Se nao for letra, o ultimo caracter
+	jz sair			; pode ser desprezado
+	cmp r9, r6
+	jz sair
+	
+	st (r3),r9		; Escreve a ultima letra lida
+	add r3, 1		; Anda na escrita
+	jmp sair
+	
+
 voltaUltimoEspaco:
 
+	set r11, -1		; Se r4 = -1, nao ha espaco em branco
+	cmp r11, r4		; Entao deve copiar um \n na saida
+				; E continuar a execucao
+	jz copiaQuebraSaida	; 
+	
+				; Se houver espaco em branco	
 	mov r2, r4		; Faz o ponteiro de leitura apontar pro ultimo
 				; espaco em branco lido	
 	mov r3, r8		; Faz o ponteiro de escrita apontar pro ultimo
 				; espaco em branco escrito
-	st (r4), r5		; Escreve \n na saida
+	st (r8), r5		; Escreve \n na saida
+	
+	set r4, -1		; Nao existem mais espacos em aberto
+	set r8, -1
+
 	jmp reiniciaContador
 
 
 copiaQuebraSaida:
+	
+	st (r3), r5		; Copia \n na saida
+	jmp reiniciaContador	; Volta para um inicio de linha
 
+
+copiaQuebraFinal:
+
+	st (r3), r9		; Escreve o ultimo caracter lido do final da linha
+	add r3, 1		; Anda na saida
+	add r2, 1		; Anda na entrada
 	st (r3), r5		; Copia \n na saida
 	jmp reiniciaContador	; Volta para um inicio de linha
 
@@ -128,13 +165,13 @@ processaCaracter:
 	cmp r9, r5		; Verifica se a leitura eh um \n
 	jz escreveEspacoSaida	; Se for, escreve um espaco na saida tambem
 	jmp escreveLetraSaida	; Se nao for espaco ou \n eh letra
-
+	
 
 escreveEspacoSaida:
 
 	st (r3), r6		; Escreve espaco na memoria
-	mov r4, r6		; Guarda ponteiros para ultimo espaco
-	mov r8, r6
+	mov r4, r2		; Guarda ponteiros para ultimo espaco - entrada
+	mov r8, r3		; saida
 	jmp incrementaContador	; Anda na entrada e saida
 
 
