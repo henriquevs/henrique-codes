@@ -1,0 +1,52 @@
+;Aluno1:095725:Francine Domingos de Paula
+;Aluno2:105063:Henrique Vicente Souza
+
+;**********************************************************************************
+; Instituto de Computacao da UNICAMP
+; Disciplina MC404E: Primeiro Semestre de 2012
+; Laboratorio 07: Numeração de linhas
+; Autores: Francine Domingos de Paula RA:095725
+;          Henrique Vicente Souza     RA:105063		
+;**********************************************************************************
+
+;**********************************************************************************
+; Objetivo:  Escrever um programa que leia do teclado um texto e escreva na tela o
+; texto lido, mas com o número da linha à esquerda do texto.
+;**********************************************************************************
+
+SAIDA 	.equ 2			; Tela -> dispositivo de saida na porta 02h
+ENTRADA .equ 1			; Teclado -> dispositivo de entrada na porta 01h
+
+	.org 0h			; Posição inicial de execução
+
+main:
+
+	set r0,20h		; Espaço
+	set r1,0ah		; Quebra
+	set r2,2ah		; Caracetere asterisco -> indica fim de arquivo
+	set r3,1		; Contador
+	set r4,10		; Num max de algarismos
+
+loop:
+	cmp r4,r3		; Verifica número da linha
+	jg escreveEspaco	
+
+caracter:
+	outb	SAIDA,r3
+	outb 	SAIDA,r0
+
+escreve:
+	inb 	r5,ENTRADA
+	cmp 	r5,r2		; Chegou no fim?
+	jz sair
+
+	add r3,1
+	outb	SAIDA,	r5
+	jmp loop
+
+escreveEspaco:
+	outb 	SAIDA,r0
+	jmp	caracter 
+	
+sair:
+	hlt
