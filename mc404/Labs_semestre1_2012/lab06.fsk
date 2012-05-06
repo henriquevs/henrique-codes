@@ -1,0 +1,90 @@
+;Aluno1:095725:Francine Domingos de Paula
+;Aluno2:105063:Henrique Vicente Souza
+
+;**********************************************************************************
+; Instituto de Computacao da UNICAMP
+; Disciplina MC404E: Primeiro Semestre de 2012
+; Laboratorio 06: Palindromo
+; Autores: Francine Domingos de Paula RA:095725
+;          Henrique Vicente Souza     RA:105063		
+;**********************************************************************************
+
+;**********************************************************************************
+; Objetivo: Desenvolver um programa que, dado um conjunto de N bytes (1 <= N <= 3), 
+; determine se o valor eh ou nao um padrao de bytes palindromo. 
+; Tambem exercita o uso de instruções de deslocamento.
+;**********************************************************************************
+
+
+;**********************************************************************************
+; Reserva memoria para os dados a serem lidos
+;**********************************************************************************	
+		.org 0h
+N:		.ds  4h
+leitura:	.ds  4h
+result:		.ds  4h	; Reserva espaco para guardar o resultado da avaliacao
+
+;**********************************************************************************
+; Inicio do programa
+;**********************************************************************************
+
+main:
+
+	.org 0ch	; Comeca a execucao nessa posicao de memoria
+	
+	ld  r1, leitura	; Registrador r1 guarda a leitura
+	
+	mov r10, r1	; R10 eh a copia da leitura original, jah que r1 tera seu 
+			; valor destruido durante a execucao
+	
+	ld  r0, N	; Coloca em r0 o valor de N
+	set r3, 1 	; r3 eh contador de bytes no loop para contar bits
+	xor r12, r12
+		
+
+contaBits:
+	
+	cmp r3, r0	; Contou todos os bytes?
+	jg  desloca	; Se sim, comeca a deslocar os bits
+	add r4, 8	; Vai contando a quantidade de bits 
+	add r3, 1	; Incrementa a quantidade de bytes contados
+	jmp contaBits
+
+
+; Desloca: retira o bit menos significativo da leitura, coloca em C,
+; e joga esse elemento no fim da saida
+; Com a rotacao na saida, esse bit vai sendo varrido para uma posicao
+; de maior significancia com o loop, montando a saida de forma contraria
+; ao original
+
+desloca:
+	
+	cmp r5, r4	; Jah trocou todos os bits
+	jz palindromo	; Verifica se eh palindromo
+	
+	shr r1, 1	; Desloca a leitura para direita
+	rcl r2, 1 	; Rotaciona a escrita para esquerda
+
+	add r5, 1	; Vai para o proximo bit
+	jmp desloca
+
+
+palindromo:		
+
+	cmp r2, r10	; Verifica se r2 == r10
+			; Ou seja, se o inverso eh igual ao original
+	jz  ehPalind
+	
+	set r12, -1	; Nao eh palindromo
+	jmp sair
+
+
+ehPalind:
+	
+	set r12, 1
+
+	
+sair:
+	
+	st result, r12	; Guarda o resultado da comparacao na memoria
+	sys 20h		; Sai
