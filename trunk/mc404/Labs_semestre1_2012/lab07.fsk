@@ -4,49 +4,94 @@
 ;**********************************************************************************
 ; Instituto de Computacao da UNICAMP
 ; Disciplina MC404E: Primeiro Semestre de 2012
-; Laboratorio 07: Numera√ß√£o de linhas
+; Laboratorio 07: NumeraÁ„o de linhas
 ; Autores: Francine Domingos de Paula RA:095725
 ;          Henrique Vicente Souza     RA:105063		
 ;**********************************************************************************
 
 ;**********************************************************************************
 ; Objetivo:  Escrever um programa que leia do teclado um texto e escreva na tela o
-; texto lido, mas com o n√∫mero da linha √† esquerda do texto.
+; texto lido, mas com o n˙mero da linha ‡ esquerda do texto.
 ;**********************************************************************************
-
-SAIDA 	.equ 2			; Tela -> dispositivo de saida na porta 02h
-ENTRADA .equ 1			; Teclado -> dispositivo de entrada na porta 01h
-
-	.org 0h			; Posi√ß√£o inicial de execu√ß√£o
 
 main:
 
-	set r0,20h		; Espa√ßo
-	set r1,0ah		; Quebra
-	set r2,2ah		; Caracetere asterisco -> indica fim de arquivo
-	set r3,1		; Contador
-	set r4,10		; Num max de algarismos
+SAIDA 	.equ 2			; Tela -> dispositivo de saida na porta 02h
+ENTRADA .equ 1			; Teclado -> dispositivo de entrada na porta 01h
+ESPACO	.equ 20h
+QUEBRA	.equ 0ah
+ASTER	.equ 2ah		
 
+
+	.org 0h			; PosiÁ„o inicial de execuÁ„o
+
+	set 	r0, ESPACO	; EspaÁo
+	set 	r1, QUEBRA	; Quebra
+	set 	r2, ASTER	; Caractere asterisco -> indica fim de arquivo
+
+	set 	r3, 30h		; Contador das unidades, 0 em ASCII
+	set 	r4, 30h		; Contador das dezenas
+	set 	r5, 39h		; Caracter 9 em ASCII
+	set	r6, QUEBRA	; Comeca o programa com quebra na leitura, para poder
+				; escrever os numeros da linha
+	set 	r7, ESPACO	; "Flag" que indica se deve ser escrito um espaco em branco
+	jmp 	escrevePrimeiro
+	
 loop:
-	cmp r4,r3		; Verifica n√∫mero da linha
-	jg escreveEspaco	
+
+	inb 	r6, ENTRADA	; Efetua a leitura do teclado
+	cmp 	r6, r2		; Chegou no fim? Achou caracter *?
+	jz  	sair		; Se sim, sai
+				; Se nao achou...
+	
+	cmp 	r6, r1		; Compara a entrada com a quebra
+	jz	escreveNum	; Se for quebra, escreve o numero da nova linha
+
 
 caracter:
-	outb	SAIDA,r3
-	outb 	SAIDA,r0
 
-escreve:
-	inb 	r5,ENTRADA
-	cmp 	r5,r2		; Chegou no fim?
-	jz sair
+	outb	SAIDA, r6	; Se nao for quebra, exibe o caracter na saida
+	jmp 	loop		; Volta para o loop de escrita
+			
+		
+escreveNum:
+		
+	cmp 	r3, r5		; Chegou na unidade 9?
+	jnz	escreveDez	; Se nao chegou, escreve a dezena atual
+				; Se chegou...
+	
+	set 	r7, 0		; "flag" que sinaliza que ha numeros na dezenas
+	add 	r4, 1		; Adiciona 1 a dezena
+	set 	r3, 2Fh		; Zera as unidades -- Fica com "-1"
+	jmp 	escreveDez
 
-	add r3,1
-	outb	SAIDA,	r5
-	jmp loop
+
+escreveDez:
+
+	outb    SAIDA, r1
+
+	
+escrevePrimeiro:
+
+	cmp	r7, r0		; Deve escrever espaco em branco?
+	jz	escreveEspaco	
+	outb 	SAIDA, r4	; Se nao, escreve a dezena atual
+	
+
+escreveUnidade:
+		
+	add 	r3, 1		; Adiciona 1 na unidade
+
+	outb	SAIDA, r3	; Escreve unidade
+	outb	SAIDA, r0	; Escreve espaco
+	jmp 	loop		; Continua escrevendo
+
 
 escreveEspaco:
-	outb 	SAIDA,r0
-	jmp	caracter 
+
+	outb	SAIDA, r0	; Escreve espaco
+	jmp 	escreveUnidade
 	
+
 sair:
 	hlt
