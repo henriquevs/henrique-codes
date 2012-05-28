@@ -1,0 +1,129 @@
+;Aluno1:095725:Francine Domingos de Paula
+;Aluno2:105063:Henrique Vicente Souza
+
+;**********************************************************************************
+; Instituto de Computacao da UNICAMP
+; Disciplina MC404E: Primeiro Semestre de 2012
+; Laboratorio 08: Conta
+; Autores: Francine Domingos de Paula RA:095725
+;          Henrique Vicente Souza     RA:105063		
+;**********************************************************************************
+
+;**********************************************************************************
+; Objetivo:  Exercitar o uso de instruções de entrada e saída com dispositivos 
+; (painel de leds, botões e painel de displays de 7 segmentos) 
+;**********************************************************************************
+
+; Constantes
+
+; Vetor de conversao decimal/ display de 7 segmentos
+TABDIG: .db 7eh,30h,6dh,79h,33h,5bh,5fh,70h,7fh,7bh
+
+DISPLAY1 	.equ 70h
+DISPLAY2 	.equ 71h
+DISPLAY3 	.equ 72h
+DISPLAY4 	.equ 73h
+CONTA		.equ 10h
+LIGA		.equ 11h
+LED     	.equ 20h
+READY		.equ 1		; Indica que botão foi pressionado
+
+
+    	.org 100h
+
+main:
+
+     	set 	r1, 07eh      ; Inicializa displays com zero (1111110b)
+     	set 	r0, DISPLAY1
+     	outb 	r0, r1
+     	set 	r0, DISPLAY2
+     	outb 	r0, r1
+     	set 	r0, DISPLAY3
+     	outb 	r0,r1
+     	set 	r0,DISPLAY4
+     	outb 	r0,r1
+
+
+	set r3, 9	; Valor maximo de uma casa
+     	set r4,READY    ; r4 vai ser usado como máscara
+
+zera:	
+
+	outb CONTA, r11 ; Desativa a acao do botao Conta
+
+loop:
+                  
+     	inb r0, LIGA	; Fica continuamente num loop verificando se botão LIGA foi pressionado
+	outb LED, r0	; Usa "LIGA" como flag para setar o LED
+	
+	inb r1, CONTA
+	cmp r1, r4	; Clicou em contar?
+	jnz loop	; Se nao clicou, volta pro loop
+	jmp seta	; Se clicou, aumenta a contagem
+
+limpa:
+	jmp main
+
+seta:
+	cmp r0, r4	; Esta ligado?
+	jnz zera	; Se nao estiver, zera botao de contagem
+		
+	cmp r6, r3	; Chegou na unidade 9?
+	jz addDez	; Se sim, aumenta dezena
+
+	add r6, 1	; Adiciona 1 na unidade
+	jmp atualizaUnidade
+
+addDez:
+
+	set r6, 0	; Zera a unidade
+	cmp r7, r3	; Chegou na dezena 9?
+	jz addCent	; Se sim, aumenta centena
+	add r7, 1	; Se não, aumenta 1 na dezena
+	jmp atualizaDez
+
+addCent:
+
+	set r7, 0	; Zera a dezena
+	cmp r8, r3	; Chegou na centena 9?
+	jz addMil	; Se sim, aumenta no mil
+	add r8, 1	; Se não, aumenta 1 na centena
+	jmp atualizaCent
+
+addMil:
+
+	set r8, 0	; Zera a centena
+	cmp r9, r3	; Chegou em 9999?
+	jz limpa	; Se sim, zera o display e recomeça
+	add r9, 1	; Se não, aumenta 1 em mil
+
+atualizaMil:
+
+	set r1,TABDIG	; Prepara para determinar codificação	
+	add r1,r9	; do digito lido	
+	ldb r1,(r1) 	; Carrega a codificação correspondente	
+	outb DISPLAY4,r1; Escreve no mostrador	
+
+
+atualizaCent:
+
+	set r1,TABDIG		
+	add r1,r8 		
+	ldb r1,(r1) 		
+	outb DISPLAY3,r1
+
+atualizaDez:
+
+	set r1,TABDIG		
+	add r1,r7		
+	ldb r1,(r1) 		
+	outb DISPLAY2,r1
+
+atualizaUnidade:
+
+	set r1,TABDIG		
+	add r1,r6 		
+	ldb r1,(r1) 		
+	outb DISPLAY1,r1	
+
+	jmp loop		; Continua verificando
