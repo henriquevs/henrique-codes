@@ -1,0 +1,28 @@
+#Aluno1:095725:Francine Domingos de Paula
+#Aluno2:105063:Henrique Vicente Souza
+
+# Arquivo de configuracao de dispositivos para o simulador jfm
+
+# Dispositivos:
+# painel de botoes (de 1 a 8 botões)
+# painel de leds (de 1 a 8 leds)
+# painel de display de 7 segmentos (de 1 a 8 mostradores)
+
+
+#conta-liga
+
+%buttons On
+#name port int
+Liga 0x90110 0x0 T
+Conta 0x90120 0x0 P
+
+%leds On/Off
+# num_leds port
+1 0x90130
+
+%7segdisplays Display
+#port
+0x90140
+0x90150
+0x90160
+0x90170
